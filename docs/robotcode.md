@@ -156,7 +156,7 @@ What to know about the piped form:
 
 | Trap | What you see | What to do |
 |---|---|---|
-| The REPL does not create its output directory | `FileNotFoundError: ... playwright-log.txt` when the browser opens | pass an existing directory with `-d`, or leave `-d` out to use `results/` |
+| The REPL does not create its output directory: `results/`, or the one given with `-d` | `FileNotFoundError: ... playwright-log.txt` when the browser opens | create the directory first. `results/` exists once a test has run in the clone |
 | `Import Resource` at run time resets a variable given with `-v`, if the resource sets it in a variable table | the REPL ignores your `-v` | give the default in the keyword with `Get Variable Value`, as `resources/shop.resource` does for `HEADLESS` |
 | `.break "<keyword>"` with quotes at the `(rdb)` prompt | the breakpoint never stops | leave out the quotes there: `.break Go To Catalogue`. On the command line, `--break "<keyword>"` is right |
 | The REPL's exit code | always 0, and its `output.xml` says PASS, whatever failed | read the output, or run a test for a verdict |

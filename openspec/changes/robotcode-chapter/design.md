@@ -9,7 +9,7 @@ See proposal.md for why. The facts this design builds on:
   - It loses after a run-time `Import Resource`. Checked while exploring: in the REPL, and in a plain `robotcode robot` run that imports the resource at run time, `${HEADLESS}` reads `False` before the import and `True` after it. This is Robot Framework's behaviour, not RobotCode's.
   - `shop.resource` is the only file that uses `HEADLESS`.
   - The MCP server of Lab 6 imports it too, and reads no `robot.toml`.
-- **The REPL does not create its output directory**, and `New Browser` then fails with `FileNotFoundError` for `playwright-log.txt`. `results/` exists after Lab 0's first run, so the trap bites only when an agent passes its own `-d`. The Lab 4 rehearsal's agent did exactly that.
+- **The REPL does not create its output directory**, and `New Browser` then fails with `FileNotFoundError` for `playwright-log.txt`. In the lab, `results/` exists after Lab 0's first run, so the trap bites when an agent passes its own `-d`, as the Lab 4 rehearsal's agent did. The re-rehearsal (D5) ran in a clone where no test had run yet, and hit it with the default `results/` as well.
 - **Driving the debugger:**
   - The installed RobotCode plugin tells agents to drive the REPL and the debugger interactively, and to pipe a fixed command sequence only as a fallback.
   - The three supported agents run shell commands to completion. The rehearsal's agent therefore kept the debugger alive in tmux, which Windows does not have.

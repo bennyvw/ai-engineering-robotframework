@@ -69,9 +69,9 @@ the traps.
    > (HEADLESS set to False): open the products page through resources/shop.resource, set the range to $100-$300,
    > apply the filters, and tell me which keywords and locators would work for a test. Don't write a test file.
 
-   A browser window opens and follows the agent's steps. If the agent passes its own output directory with `-d`,
-   that directory must exist: the REPL does not create it, and opening the browser fails. The REPL is the right tool
-   *only* here. An agent that
+   A browser window opens and follows the agent's steps. The REPL does not create its output directory, so opening
+   the browser fails unless it exists: `results/`, which your earlier runs created, or one the agent passes with `-d`.
+   The REPL is the right tool *only* here. An agent that
    opens the REPL to investigate the failing test of step 5 is misusing it: look out for that in the debrief.
 
 ## Stretch

@@ -57,17 +57,17 @@
 
 ## 5. Rehearsal
 
-- [ ] 5.1 Rehearse Lab 4's step 6 again with Claude Code, in a clone at the state after step 5 (design D5). Verify:
+- [x] 5.1 Rehearse Lab 4's step 6 again with Claude Code, in a clone at the state after step 5 (design D5). Verify:
   - the agent opens a visible browser with `-v HEADLESS:False` and no workaround (`"headless": false` in its output);
   - it writes no test file, and names keywords and locators for the price range;
   - Lab 4's checklist items for step 6 hold.
-- [ ] 5.2 Replace step 6 and its caveat in `transcripts/lab-04-robotcode.md` with the new run, and record the run in `docs/facilitator/rehearsal.md`, including why the Codex run of Lab 4 still stands. Verify:
+- [x] 5.2 Replace step 6 and its caveat in `transcripts/lab-04-robotcode.md` with the new run, and record the run in `docs/facilitator/rehearsal.md`, including why the Codex run of Lab 4 still stands. Verify:
   - the transcript scan finds no secret, local path, user or host name;
   - `tools/check_labs.py` passes.
 
 ## 6. Close-out
 
-- [ ] 6.1 Run the repository's checks. Verify:
+- [x] 6.1 Run the repository's checks. Verify:
   - `openspec validate --all --strict`, `tools/check_labs.py`, `tools/verify_outcomes.py` and the site build pass;
   - no commit contains `docs/robotcode-reports/` or any other part of the report.
 - [ ] 6.2 Archive after the merge. Verify: `workshop/facilitation` gains *A RobotCode cheat sheet* and *One boundary between Tier 3 and Tier 4*, and `workshop/baseline-suite` gains *A visible browser on request*.

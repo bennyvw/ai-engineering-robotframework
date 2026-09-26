@@ -52,7 +52,8 @@ while the room waits.
   ending with one that resumes, for example
   `printf '.where\n.continue\n' | uv run robotcode robot-debug --plain -bl "<long name>"`. When the input ends,
   the run resumes and finishes. [The cheat sheet](../robotcode.md) has more.
-- **The REPL fails with `FileNotFoundError` for `playwright-log.txt`.** The agent passed an output directory with
-  `-d` that does not exist, and the REPL does not create it. Create it, or leave out `-d` to use `results/`.
+- **The REPL fails with `FileNotFoundError` for `playwright-log.txt`.** Its output directory does not exist, and the
+  REPL does not create it: `results/` before the first test run, or a directory the agent passed with `-d`. Create
+  it.
 - **Codex cannot reach the shop from a test run.** Its sandbox blocks network access; see `docs/environments.md`.
 - **A corporate proxy blocks the agent.** Nothing to fix on the day: pair them, and give them the transcripts.

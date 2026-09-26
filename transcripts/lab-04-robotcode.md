@@ -523,411 +523,411 @@ Report:  <repo>/results/report.html
 
 ## Step 6 - Explore with the REPL
 
+*Step 6 was recorded again on 2026-09-26 with Claude Code 2.1.283, after the suite's `HEADLESS` setting was fixed so that `-v HEADLESS:False` holds in the REPL. The other steps are from the first rehearsal.*
+
+
 **Prompt:**
 
 > No test covers the price range filter yet. Explore it with the RobotCode REPL and a visible browser (HEADLESS set to False): open the products page through resources/shop.resource, set the range to $100-$300, apply the filters, and tell me which keywords and locators would work for a test. Don't write a test file.
-
-**Agent:**
-
-I'll start with the environment and conventions docs the repo asks me to read first.
 
 *The agent reads `<repo>/docs/agent-environment.md`*
 
 *The agent reads `<repo>/docs/conventions.md`*
 
-*The agent loads the skill `robotcode:robotcode`*
-
-*The agent reads `~/.claude/plugins/cache/robotframework-agent-plugins/robotcode/7c753f8adca1/skills/robotcode/references/repl.md`*
-
 *The agent reads `<repo>/resources/shop.resource`*
 
-**Agent:**
+*The agent runs `ls; cat robot.toml; ls resources tests tests/*; ls docs`*
 
-The skill reference file needs permission I don't have, so I'll work from the skill summary. Next I'll look at the existing catalogue keywords, the spec for the price filter, and the config.
+```
+AGENTS.md
+CLAUDE.md
+CONTRIBUTING.md
+GLOSSARY.md
+LICENSE
+README.md
+SETUP.md
+agents
+docs
+hooks
+labs
+mcp
+... (69 more lines)
+```
+
+*The agent reads `<repo>/docs/robotcode.md`*
 
 *The agent reads `<repo>/resources/catalogue.resource`*
 
-*The agent runs `ls resources openspec/specs/shop && cat robot.toml && grep -rn -i "price" openspec/specs/shop --include=*.md | head -60`*
+*The agent reads `<repo>/tests/ui/catalogue.robot`*
+
+*The agent runs `git diff --stat && git diff resources/catalogue.resource tests/ui/catalogue.robot; ls openspec/specs/shop/; grep -rn -i "price range\|price-range\|min.*max" openspec/specs/shop/ | head -50`*
 
 ```
-openspec/specs/shop:
-authentication
-cart
-catalogue
-checkout
-interpretation-rules
-product-detail
-search
+ AGENTS.md                    | 38 +++++++++++++++++++++++++-------------
+ resources/catalogue.resource | 10 ++++++++++
+ tests/ui/catalogue.robot     | 17 +++++++++++------
+ 3 files changed, 46 insertions(+), 19 deletions(-)
+diff --git a/resources/catalogue.resource b/resources/catalogue.resource
+index 0b9bc0b..6a09c9a 100644
+--- a/resources/catalogue.resource
++++ b/resources/catalogue.resource
+@@ -95,6 +95,16 @@ Get Highlight Prices
+     END
+     RETURN    ${prices}
+ 
+... (59 more lines)
+```
 
-resources:
-api.resource
-catalogue.resource
+*The agent reads `<repo>/openspec/specs/shop/catalogue/spec.md`*
+
+*The agent runs `uv run --no-sync python -m shop status 2>&1 | head -30; curl -s -o /dev/null -w "%{http_code}\n" http://localhost:9090/products`*
+
+```
+shop     http://localhost:9090  (version 0.3.0)
+space    default
+presets  clean, stage1
+200
+```
+
+**Agent:**
+
+I've read the conventions and the spec (WEB-002_AC-8), and the local shop is running. Next I'll open the products page in the RobotCode REPL with a visible browser.
+
+*The agent runs `echo "DISPLAY=$DISPLAY WAYLAND=$WAYLAND_DISPLAY"; cd <repo> && uv run robotcode repl --help 2>&1 | head -40`*
+
+```
+DISPLAY=:0 WAYLAND=wayland-0
+Usage: robotcode repl [OPTIONS] [FILES]...
+
+  Run Robot Framework interactively (alias `shell`).
+
+  Starts an interactive session where you enter Robot Framework keywords and
+  run them immediately. Pass FILES to execute them in the session.
+
+Options:
+  --no-history                    Don't load or save the persistent history
+                                  file. In-session arrow-up recall still
+                                  works, but nothing crosses session
+... (29 more lines)
+```
+
+*The agent runs `uv run robotcode libdoc Browser list "*Aria*" ; uv run robotcode libdoc Browser list "*Range*"; uv run robotcode libdoc Browser list "Fill*"; uv run robotcode libdoc Browser list "*Slider*"`*
+
+```
+Get Aria Snapshot
+Fill Secret
+Fill Text
+```
+
+*The agent runs `printf '%s\n' \
+'Import Resource    ${EXECDIR}/resources/catalogue.resource' \
+'Open Shop Browser' \
+'Start Shop Test' \
+'Go To Catalogue' \
+'${snap}=    Get Aria Snapshot    role=complementary' \
+'Log To Console    ${snap}' \
+'${html}=    Get Property    role=complementary >> role=group[name="Price range"]    outerHTML' \
+'Log To Console    ${html}' \
+'${form}=    Get Property    role=complementary    outerHTML' \
+'Log To Console    ${form}' \
+'.exit' \
+| timeout 120 uv run robotcode repl --plain --no-history -v HEADLESS:False 2>&1 | tail -150`*
+
+```
+[ INFO ] ${headless} = False
+[ INFO ] {"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "
+[ FAIL ] FileNotFoundError: [Errno 2] No such file or directory: '<repo>/resul
+[ INFO ] {
+  "acceptDownloads": true,
+  "baseURL": "http://localhost:9090",
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+... (14 more lines)
+```
+
+**Agent:**
+
+The REPL hit the documented trap: `results/` doesn't exist yet. It's git-ignored, so I'll create it and follow the flow exactly through `shop.resource`.
+
+*The agent runs `git check-ignore -v results/ && mkdir -p results && printf '%s\n' \
+'Import Resource    ${EXECDIR}/resources/shop.resource' \
+'Open Shop Browser' \
+'Start Shop Test' \
+'Go To Shop Page    /products' \
+'${snap}=    Get Aria Snapshot    role=complementary' \
+'Log To Console    ${snap}' \
+'${html}=    Get Property    role=complementary >> role=group[name="Price range"]    outerHTML' \
+'Log To Console    ${html}' \
+'.exit' \
+| timeout 120 uv run robotcode repl --plain --no-history -v HEADLESS:False 2>&1 | grep -v '^\[ INFO \] {' | tail -150`*
+
+```
+.gitignore:11:results/	results/
+[ INFO ] ${headless} = False
+[ INFO ] Starting Browser process <repo>/.venv/lib/python3.12/site-packages/Br
+[ INFO ] Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo
+  "acceptDownloads": true,
+  "baseURL": "http://localhost:9090",
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+... (122 more lines)
+```
+
+*The agent runs `cat resources/legacy.resource; uv run robotcode libdoc Browser show "Fill Text" | head -40`*
+
+```
+*** Settings ***
+Documentation       Legacy locators, kept deliberately; see docs/conventions.md.
+...
+...                 These keywords find elements by id, class or data-test hook instead of
+...                 the shop's stable contract. Each such locator names exactly one element.
+
+Library             Browser
+Resource            catalogue.resource
+Resource            checkout.resource
+
+
+*** Keywords ***
 ... (68 more lines)
 ```
 
-**Agent:**
-
-The spec is WEB-002_AC-8. I'll read the catalogue spec and interpretation rules, check the shop is up, and check that the REPL is available.
-
-*The agent runs `sed -n 1,95p openspec/specs/shop/catalogue/spec.md && echo ---- && uv run --no-sync python -m shop status; echo ---- && uv run --no-sync robotcode repl --help | head -40`*
-
-*The agent reads `<repo>/openspec/specs/shop/interpretation-rules/spec.md`*
+*The agent runs `cat resources/api.resource | head -60`*
 
 ```
-# shop/catalogue Specification
+*** Settings ***
+Documentation       The shop's API, in the configured workshop space.
 
-## Purpose
-Describes the products page, `/products`, as a shopper experiences it: the product grid, its filters, the collection previews and the highlights.
+Library             Collections
+Library             RequestsLibrary
 
-## Requirements
 
-### Requirement: Full product grid (WEB-002_AC-1)
-When a shopper opens `/products` and the page finishes loading, the page SHALL display all 12 seeded products in a grid. Each product card SHALL show the product's name, its image, its price - the pro
-
-#### Scenario: Opening the products page
-- **WHEN** a shopper opens `/products`
-... (128 more lines)
-```
-
-**Agent:**
-
-The shop is running locally (v0.3.0). Before starting the REPL I'll check the rest of its options and whether this WSL session has a display for a visible browser.
-
-*The agent runs `uv run --no-sync robotcode repl --help | sed -n 40,200p; echo "DISPLAY=$DISPLAY WAYLAND=$WAYLAND_DISPLAY"`*
-
-```
-                                  imported. See `robot --pythonpath` option.
-  -k, --show-keywords             Executed keywords will be shown in the
-                                  output.
-  -i, --inspect                   Activate inspection mode. This forces a
-                                  prompt to appear after the REPL script is
-                                  executed.
-  -d, --outputdir DIR             Where to create output files. See `robot
-                                  --outputdir` option.
-  -o, --output FILE               XML output file. See `robot --output`
-                                  option.
-  -r, --report FILE               HTML output file. See `robot --report`
-                                  option.
-... (41 more lines)
-```
-
-*The agent runs `S=<scratch> mkdir -p $S && : > $S/cmds.txt && : > $S/out.log && echo ok`*
-
-```
-ok
-```
-
-*The agent runs `S=<scratch> cd <repo> && tail -n +1 -f $S/cmds.txt | uv run --no-sync robotcode repl --plain --no-history -k -v HEADLESS:False -d $S/results > $S/out.log 2>&1`*
-
-```
-Command running in background with ID: b3gi419pd. Output is being written to: <scratch>
-Session cwd remains <repo>; directory changes made by the backgrounded command d
-```
-
-*The agent runs `S=<scratch> timeout 30 bash -c "until [ -s $S/out.log ]; do sleep 0.5; done"; cat $S/out.log`*
-
-```
-(Bash completed with no output)
-```
-
-**Agent:**
-
-The REPL printed nothing yet (the plain prompt may be buffered). I'll send the first statements: import the shop resource and check that `${SHOP_URL}` resolved from the project config.
-
-*The agent runs `S=<scratch> printf '%s\n' 'Import Resource    ${EXECDIR}/resources/shop.resource' 'Log To Console    URL=${SHOP_URL} HEADLESS=${HEADLESS}' >> $S/cmds.txt; timeout 40 bash -c "until grep -q 'URL=' $S/out.log; do sleep 0.5; done"; cat $S/out.log`*
-
-```
-KEYWORD BuiltIn.Import Resource  ${EXECDIR}/resources/shop.resource
-KEYWORD BuiltIn.Log To Console  URL=${SHOP_URL} HEADLESS=${HEADLESS}
-URL=http://localhost:9090 HEADLESS=True
-```
-
-*The agent runs `S=<scratch> printf '%s\n' 'Set Global Variable    ${HEADLESS}    ${False}' 'Open Shop Browser' 'Start Shop Test' 'Import Resource    ${EXECDIR}/resources/catalogue.resource' 'Go To Catalogue' 'Log To Console    STEP1 done HEADLESS=${HEADLESS}' >> $S/cmds.txt; timeout 90 bash -c "until grep -q 'STEP1 done' $S/out.log; do sleep 0.5; done"; tail -n +4 $S/out.log`*
-
-```
-KEYWORD BuiltIn.Set Global Variable  ${HEADLESS}  ${False}
-  [ INFO ] ${HEADLESS} = False
-KEYWORD shop.Open Shop Browser  
-  KEYWORD Browser.New Browser  chromium  headless=${HEADLESS}
-    [ INFO ] {"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.
-    [ FAIL ] FileNotFoundError: [Errno 2] No such file or directory: '<scratch>
-KEYWORD shop.Start Shop Test  
-<repo>/.venv/lib/python3.12/site-packages/robot/result/modeldeprecation.py:24: U
-  warnings.warn(
-<repo>/.venv/lib/python3.12/site-packages/robot/result/modeldeprecation.py:24: U
-  warnings.warn(
-<repo>/.venv/lib/python3.12/site-packages/robot/result/modeldeprecation.py:24: U
-... (38 more lines)
-```
-
-*The agent uses `ToolSearch` with `{"query": "select:TaskStop", "max_results": 1}`*
-
-*The agent uses `TaskStop` with `{"task_id": "b3gi419pd"}`*
-
-```
-{"message":"Successfully stopped task: b3gi419pd (S=<scratch> cd <scratch>
-```
-
-*The agent runs `S=<scratch> pkill -f "robotcode repl --plain" ; pkill -f "tail -n +1 -f $S/cmds.txt"; mkdir -p $S/results && : > $S/cmds.txt && : > $S/out.log && pgrep -fa "robotcode repl" || echo "no repl left"`*
-
-```
-Exit code 144
-```
-
-**Agent:**
-
-That `pkill` pattern also matched the shell running it (exit 144), so I'll check what's left and reset the files separately.
-
-*The agent runs `pgrep -fa "robotcode repl|cmds.txt|playwright" | grep -v pgrep || echo "none running"`*
-
-```
-2162248 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2162250 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2162251 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2162264 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2162268 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2162680 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2164041 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2164043 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2164044 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2164060 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2164062 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-2164357 <repo>/.venv/lib/python3.12/site-packages/Browser/wrapper/node_modules/playwright-core/.local-browsers/chromium_headless_shell-1243/chrome-headless-shel
-... (12 more lines)
-```
-
-**Agent:**
-
-No REPL of mine is left. The headless Chromium processes belong to other environments, so I'm leaving them alone. Restarting with the output directory in place:
-
-*The agent runs `S=<scratch> mkdir -p $S/results && : > $S/cmds.txt && : > $S/out.log && ls $S`*
-
-```
-cmds.txt
-out.log
-results
-```
-
-*The agent runs `S=<scratch> cd <repo> && tail -n +1 -f $S/cmds.txt | uv run --no-sync robotcode repl --plain --no-history -k -d $S/results > $S/out.log 2>&1`*
-
-```
-Command running in background with ID: bo9448nbx. Output is being written to: <scratch>
-Session cwd remains <repo>; directory changes made by the backgrounded command d
-```
-
-*The agent runs `S=<scratch> printf '%s\n' 'Import Resource    ${EXECDIR}/resources/shop.resource' 'Import Resource    ${EXECDIR}/resources/catalogue.resource' 'Set Global Variable    ${HEADLESS}    ${False}' 'Open Shop Browser' 'Start Shop Test' 'Go To Catalogue' 'Log To Console    STEP1 done HEADLESS=${HEADLESS}' >> $S/cmds.txt; timeout 90 bash -c "until grep -q 'STEP1 done' $S/out.log; do sleep 0.5; done"; grep -v -e 'warnings.warn' -e 'UserWarning' $S/out.log | grep -E 'KEYWORD|FAIL|STEP1|headless'`*
-
-```
-KEYWORD BuiltIn.Import Resource  ${EXECDIR}/resources/shop.resource
-KEYWORD BuiltIn.Import Resource  ${EXECDIR}/resources/catalogue.resource
-KEYWORD BuiltIn.Set Global Variable  ${HEADLESS}  ${False}
-KEYWORD shop.Open Shop Browser  
-  KEYWORD Browser.New Browser  chromium  headless=${HEADLESS}
-    [ INFO ] {"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.
-    [ INFO ] Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"sl
-KEYWORD shop.Start Shop Test  
-  KEYWORD None.  
-    KEYWORD None."${SHOP_SPACE}"  
-      KEYWORD BuiltIn.Create Dictionary  X-Workshop-Space=${SHOP_SPACE}
-      KEYWORD Browser.New Context  baseURL=${SHOP_URL}  extraHTTPHeaders=${headers}
-... (9 more lines)
-```
-
-*The agent runs `S=<scratch> printf '%s\n' '${html}=    Get Property    ${FILTERS} >> role=group[name="Price range"]    outerHTML' 'Log To Console    HTML>>${html}<<END' '${n}=    Get Grid Card Count' '${vals}=    Get Price Range Values' 'Log To Console    STEP2 cards=${n} values=${vals}' >> $S/cmds.txt; timeout 60 bash -c "until grep -q 'STEP2 cards' $S/out.log; do sleep 0.5; done"; sed -n '/HTML>>/,/<<END/p' $S/out.log; grep -E 'STEP2|FAIL' $S/out.log`*
-
-```
-KEYWORD BuiltIn.Log To Console  HTML>>${html}<<END
-HTML>><fieldset class="filter-group">
-        <legend>Price range</legend>
-        
-        <div class="price-filter">
-          <div class="price-filter__values">
-            <span>$<output for="price-min-range">39.50</output></span>
-            <span>$<output for="price-max-range">899.00</output></span>
-          </div>
-          <div class="price-filter__sliders">
-            <input type="range" id="price-min-range" aria-label="Minimum price" min="39.50" max="899.00" value="39.50" step="any">
-            <input type="range" id="price-max-range" aria-label="Maximum price" min="39.50" max="899.00" value="899.00" step="any">
-... (7 more lines)
-```
-
-*The agent runs `S=<scratch> printf '%s\n' 'Fill Text    ${FILTERS} >> role=slider[name="Minimum price"]    100' 'Fill Text    ${FILTERS} >> role=slider[name="Maximum price"]    300' '${vals}=    Get Price Range Values' '${hmin}=    Get Attribute    ${FILTERS} >> input[name="price_min"]    value' '${hmax}=    Get Property    ${FILTERS} >> input[name="price_max"]    value' '${smin}=    Get Property    ${FILTERS} >> role=slider[name="Minimum price"]    value' '${smax}=    Get Property    ${FILTERS} >> role=slider[name="Maximum price"]    value' 'Log To Console    STEP3 shown=${vals} sliders=${smin}/${smax} hidden=${hmin}/${hmax}' >> $S/cmds.txt; timeout 60 bash -c "until grep -q 'STEP3 shown' $S/out.log; do sleep 0.5; done"; sed -n '/STEP2 cards/,$p' $S/out.log | grep -E 'Fill Text|FAIL|STEP3|Error'`*
-
-```
-KEYWORD Browser.Fill Text  ${FILTERS} >> role=slider[name="Minimum price"]  100
-KEYWORD Browser.Fill Text  ${FILTERS} >> role=slider[name="Maximum price"]  300
-KEYWORD BuiltIn.Log To Console  STEP3 shown=${vals} sliders=${smin}/${smax} hidden=${hmin}/${hmax}
-STEP3 shown=['100.00', '300.00'] sliders=100/300 hidden=100.00/300.00
-```
-
-*The agent runs `S=<scratch> printf '%s\n' 'Apply Filters' '${url}=    Get Url' '${n}=    Get Grid Card Count' '${names}=    Get Grid Card Names' '${prices}=    Get Texts    ${GRID} >> article >> ${CARD PRICE}' '${vals}=    Get Price Range Values' 'Log To Console    STEP4 url=${url} cards=${n} names=${names} prices=${prices} shown=${vals}' >> $S/cmds.txt; timeout 60 bash -c "until grep -q 'STEP4 url' $S/out.log; do sleep 0.5; done"; sed -n '/STEP3 shown/,$p' $S/out.log | grep -E 'Apply Filters|FAIL|STEP4|Error'`*
-
-```
-KEYWORD catalogue.Apply Filters  
-KEYWORD BuiltIn.Log To Console  STEP4 url=${url} cards=${n} names=${names} prices=${prices} shown=${vals}
-STEP4 url=http://localhost:9090/products?price_min=100.00&price_max=300.00 cards=6 names=['Aurora Neural Headphones', 'Echo Conference Speaker', 'Nimbus Desk Light', 'Pulse Bio Ring', 'Summit Trail Sh
-```
-
-*The agent runs `grep -n -i -E "products|Keyword|^\S" resources/api.resource | head -40; curl -s http://localhost:9090/api/products | python3 -c "import sys,json; d=json.load(sys.stdin); d=d.get('products',d) if isinstance(d,dict) else d; [print(p.get('id'), p.get('price'), p.get('name')) for p in sorted(d,key=lambda p:p['price'])]"`*
-
-```
-Exit code 1
-1:*** Settings ***
-2:Documentation       The shop's API, in the configured workshop space.
-4:Library             Collections
-5:Library             RequestsLibrary
-8:*** Keywords ***
-9:Open Shop API
-17:Get Shop Health
-22:Get Catalogue From API
-23:    [Documentation]    Every product, as dictionaries, from ``GET /api/products/``.
-24:    ${response}=    GET On Session    shop    /api/products/    expected_status=200
-pyenv: version `3.12' is not installed (set by <repo>/.python-version)
-```
-
-*The agent runs `sed -n 8,40p resources/api.resource; curl -sL http://localhost:9090/api/products/ | uv run --no-sync python -c "import sys,json; d=json.load(sys.stdin); d=d.get('products',d) if isinstance(d,dict) else d; [print(p.get('id'), p.get('price'), p.get('name'), p.get('category')) for p in sorted(d,key=lambda p:p['price'])]"`*
-
-```
-Exit code 1
 *** Keywords ***
 Open Shop API
     [Documentation]    Creates the API session. It sends ${SHOP_SPACE} when one is set.
     &{headers}=    Create Dictionary
     IF    "${SHOP_SPACE}"
-        Set To Dictionary    ${headers}    X-Workshop-Space=${SHOP_SPACE}
-    END
-    Create Session    shop    ${SHOP_URL}    headers=${headers}
-
-Get Shop Health
-    [Documentation]    The body of ``GET /health``.
-... (11 more lines)
-```
-
-*The agent runs `S=<scratch> printf '%s\n' 'Import Resource    ${EXECDIR}/resources/api.resource' 'Open Shop API' '@{all}=    Get Catalogue From API' '${sorted}=    Evaluate    sorted(((p["price"], p["name"]) for p in $all))' 'Log To Console    STEP5 all=${sorted}' '${expected}=    Evaluate    sorted(p["name"] for p in $all if 100 <= p["price"] <= 300)' '${names}=    Get Grid Card Names' '${actual}=    Evaluate    sorted($names)' 'Log To Console    STEP6 expected=${expected} actual=${actual} equal=${{ $expected == $actual }}' >> $S/cmds.txt; timeout 60 bash -c "until grep -q 'STEP6 expected' $S/out.log; do sleep 0.5; done"; sed -n '/STEP4 url/,$p' $S/out.log | grep -E 'FAIL|STEP5|STEP6|Error'`*
-
-```
-KEYWORD BuiltIn.Log To Console  STEP5 all=${sorted}
-STEP5 all=[(39.5, 'Insight Smart Notebook'), (59.0, 'Focus Loop Timer'), (79.0, 'Cascade Water Bottle'), (129.0, 'Nimbus Desk Light'), (149.0, 'Summit Trail Shoes'), (169.0, 'Velocity Travel Backpack'
-KEYWORD BuiltIn.Log To Console  STEP6 expected=${expected} actual=${actual} equal=${{ $expected == $actual }}
-STEP6 expected=['Aurora Neural Headphones', 'Echo Conference Speaker', 'Nimbus Desk Light', 'Pulse Bio Ring', 'Summit Trail Shoes', 'Velocity Travel Backpack'] actual=['Aurora Neural Headphones', 'Ech
-```
-
-*The agent runs `cat tests/ui/catalogue.robot; echo ----DIFF; git diff --stat; git diff resources/catalogue.resource tests/ui/catalogue.robot | head -80`*
-
-```
-*** Settings ***
-Documentation       The products page, /products (spec: shop/catalogue).
-
-Resource            resources/shop.resource
-Resource            resources/api.resource
-Resource            resources/catalogue.resource
-Resource            resources/legacy.resource
-
-Suite Setup         Run Keywords    Open Shop Browser    AND    Open Shop API
-Suite Teardown      Close Browser
-Test Setup          Start Shop Test
-
-... (130 more lines)
-```
-
-*The agent runs `uv run --no-sync robotcode libdoc resources/legacy.resource list 2>&1 | tail -20; grep -n -A6 -E "^Get Card Prices|^Get Grid Cards" resources/legacy.resource`*
-
-```
-Fill Checkout Form By Field Ids
-Get Card Prices
-Get Grid Cards
-Get Order Total
-Get Product Grid
-18:Get Card Prices
-19-    [Documentation]    The price of every grid card, in page order.
-20-    ${grid}=    Get Product Grid
-21-    @{prices}=    Get Texts    ${grid} >> article >> ${CARD PRICE}
-22-    RETURN    ${prices}
-23-
-24:Get Grid Cards
-... (6 more lines)
+... (13 more lines)
 ```
 
 **Agent:**
 
-Status: the exploration is done and the filter behaves as specified. I'm checking the last detail, which locator the legacy grid keyword uses, before I write up the recommendation.
+Now the main experiment: set both sliders with `Fill Text`, watch the displayed values and hidden fields, apply, and read the resulting grid.
 
-*The agent runs `grep -n -B2 -A6 -E "^Get Product Grid" resources/legacy.resource`*
+*The agent runs `printf '%s\n' \
+'Import Resource    ${EXECDIR}/resources/shop.resource' \
+'Import Resource    ${EXECDIR}/resources/catalogue.resource' \
+'Import Resource    ${EXECDIR}/resources/legacy.resource' \
+'Import Resource    ${EXECDIR}/resources/api.resource' \
+'Open Shop Browser' \
+'Start Shop Test' \
+'Go To Shop Page    /products' \
+'${before}=    Get Grid Card Count' \
+'Fill Text    ${FILTERS} >> role=slider[name="Minimum price"]    100' \
+'Fill Text    ${FILTERS} >> role=slider[name="Maximum price"]    300' \
+'${shown}=    Get Price Range Values' \
+'${min_value}=    Get Property    ${FILTERS} >> role=slider[name="Minimum price"]    value' \
+'${max_value}=    Get Property    ${FILTERS} >> role=slider[name="Maximum price"]    value' \
+'${hidden_min}=    Get Attribute    ${FILTERS} >> input[name="price_min"]    value' \
+'${hidden_hidden_max}=    Get Property    ${FILTERS} >> input[name="price_max"]    value' \
+'${hidden_min_prop}=    Get Property    ${FILTERS} >> input[name="price_min"]    value' \
+'${form}=    Get Property    role=complementary >> xpath=ancestor::form    outerHTML' \
+'Apply Filters' \
+'${url}=    Get Url' \
+'${after_shown}=    Get Price Range Values' \
+'${after_min}=    Get Property    ${FILTERS} >> role=slider[name="Minimum price"]    value' \
+'${after_max}=    Get Property    ${FILTERS} >> role=slider[name="Maximum price"]    value' \
+'${count}=    Get Grid Card Count' \
+'@{names}=    Get Grid Card Names' \
+'@{prices}=    Get Card Prices' \
+'Open Shop API' \
+'@{catalogue}=    Get Catalogue From API' \
+'@{expected}=    Evaluate    sorted((p["name"], p["price"]) for p in $catalogue if 100 <= float(p["price"]) <= 300)' \
+'@{all}=    Evaluate    sorted((float(p["price"]), p["name"]) for p in $catalogue)' \
+'Sleep    3s' \
+'.exit' \
+| timeout 180 uv run robotcode repl --plain --no-history -v HEADLESS:False 2>&1 | grep -E '^\[ (FAIL|WARN) \]|\$\{|@\{|URL' | grep -v 'Starting Browser'`*
 
 ```
-11-
-12-*** Keywords ***
-13:Get Product Grid
-14-    [Documentation]    The element that holds the product cards of the grid.
-15-    ${grid}=    Get Element    ${GRID} >> .product-grid
-16-    RETURN    ${grid}
-17-
-18-Get Card Prices
-19-    [Documentation]    The price of every grid card, in page order.
+[ INFO ] ${headless} = False
+  "baseURL": "http://localhost:9090",
+[ INFO ] {'acceptDownloads': True, 'baseURL': 'http://localhost:9090', 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMoti
+[ INFO ] Successfully opened URL http://localhost:9090/products
+[ INFO ] ${count} = 12
+[ INFO ] ${before} = 12
+[ INFO ] @{elements} = [ role=complementary >> role=group[name="Price range"] >> role=status >> nth=0 | role=complementary >> role=group[name="Price range"] >> role=status >> nth=1 ]
+[ INFO ] @{texts} = [ ]
+[ INFO ] ${text} = 100.00
+[ INFO ] ${text} = 300.00
+[ INFO ] @{values} = [ 100.00 | 300.00 ]
+[ INFO ] ${shown} = ['100.00', '300.00']
+... (43 more lines)
 ```
 
-*The agent runs `S=<scratch> printf '%s\n' 'Close Browser' 'Log To Console    STEP7 closed' >> $S/cmds.txt; timeout 30 bash -c "until grep -q 'STEP7 closed' $S/out.log; do sleep 0.5; done"; sed -n '/STEP6 expected/,$p' $S/out.log | grep -E 'Close Browser|FAIL|STEP7'`*
+*The agent runs `grep -n -A8 "Amount From Text" resources/checkout.resource | head -20; uv run robotcode libdoc Browser show "Click" | sed -n '1,25p'; curl -s http://localhost:9090/api/products/ | python3 -c 'import json,sys; [print(p["price"], p["name"], p.get("category")) for p in sorted(json.load(sys.stdin)["items"], key=lambda p: p["price"])]'`*
 
 ```
-KEYWORD Browser.Close Browser  
-KEYWORD BuiltIn.Log To Console  STEP7 closed
-STEP7 closed
+Exit code 1
+50:    ${amount}=    Amount From Text    ${text}
+51-    RETURN    ${amount}
+52-
+53:Amount From Text
+54-    [Documentation]    The amount in a text, ``$1,234.50`` as the number 1234.5.
+55-    ...                A label around it is ignored; with several amounts, the last one counts.
+56-    [Arguments]    ${text}
+57-    @{amounts}=    Get Regexp Matches    ${text}    \\$([0-9,]+\\.[0-9]{2})    1
+58-    Should Not Be Empty    ${amounts}    msg=No amount in "${text}".
+59-    ${amount}=    Evaluate    float($amounts[-1].replace(",", ""))
+60-    RETURN    ${amount}
+... (27 more lines)
 ```
 
-*The agent uses `TaskStop` with `{"task_id": "bo9448nbx"}`*
+*The agent runs `curl -s http://localhost:9090/api/products/ | uv run --no-sync python -c 'import json,sys; [print(p["price"], p["name"], p.get("category")) for p in sorted(json.load(sys.stdin)["items"], key=lambda p: p["price"])]'`*
 
 ```
-{"message":"Successfully stopped task: bo9448nbx (S=<scratch> cd <scratch>
+39.5 Insight Smart Notebook Productivity
+59.0 Focus Loop Timer Productivity
+79.0 Cascade Water Bottle Health
+129.0 Nimbus Desk Light Home Office
+149.0 Summit Trail Shoes Outdoors
+169.0 Velocity Travel Backpack Travel
+189.0 Pulse Bio Ring Health
+219.0 Echo Conference Speaker Audio
+249.99 Aurora Neural Headphones Audio
+389.0 Horizon Portable Display Displays
+799.0 Atlas Standing Desk Furniture
+899.0 Orbit Drone Camera Imaging
+```
+
+*The agent runs `printf '%s\n' \
+'Import Resource    ${EXECDIR}/resources/shop.resource' \
+'Import Resource    ${EXECDIR}/resources/catalogue.resource' \
+'Open Shop Browser' \
+'Start Shop Test' \
+'Go To Shop Page    /products' \
+'Fill Text    ${FILTERS} >> role=slider[name="Minimum price"]    100' \
+'Fill Text    ${FILTERS} >> role=slider[name="Maximum price"]    300' \
+'Apply Filters' \
+'${grid}=    Get Aria Snapshot    ${GRID}' \
+'Log To Console    ${grid}' \
+'${main}=    Get Text    role=main >> h1' \
+'${counts}=    Get Element Count    text=/[0-9]+ (products|results|items)/i' \
+'${count_text}=    Get Text    text=/[0-9]+ (products|results|items)/i' \
+'Take Screenshot    filename=${EXECDIR}/results/price-range-100-300' \
+'Sleep    3s' \
+'.exit' \
+| timeout 180 uv run robotcode repl --plain --no-history -v HEADLESS:False 2>&1 | grep -vE '^\[ INFO \] (\{|Starting|Successfully created)|^  "' | sed -n '1,120p'`*
+
+```
+[ INFO ] ${headless} = False
+    "width": 1280,
+    "height": 720
+  }
+}
+[ INFO ] Successfully initialized new page object and opened url: about:blank
+[ INFO ] Successfully opened URL http://localhost:9090/products
+[ INFO ] Fills the text '100' in the given field.
+[ INFO ] Fills the text '300' in the given field.
+[ INFO ] Clicks the element 'role=complementary >> role=button[name="Apply filters"]'.
+[ INFO ] Waited for Element with selector section:has(h2:text-is("All products")):not(:has(section)) at state visible
+[ INFO ] Aria snapshot received successfully.
+... (108 more lines)
+```
+
+*The agent runs `printf '%s\n' \
+'Import Resource    ${EXECDIR}/resources/shop.resource' \
+'Import Resource    ${EXECDIR}/resources/catalogue.resource' \
+'Import Resource    ${EXECDIR}/resources/legacy.resource' \
+'Open Shop Browser' \
+'Start Shop Test' \
+'Go To Shop Page    /products' \
+'Fill Text    ${FILTERS} >> role=slider[name="Minimum price"]    100' \
+'Fill Text    ${FILTERS} >> role=slider[name="Maximum price"]    300' \
+'Apply Filters' \
+'${count_text}=    Get Text    ${GRID} >> p:text-matches("^[0-9]+ products?$")' \
+'${prices_via_contract}=    Get Texts    ${GRID} >> article >> ${CARD PRICE}' \
+'${h}=    Get Text    role=main >> h1' \
+'.exit' \
+| timeout 180 uv run robotcode repl --plain --no-history -v HEADLESS:False 2>&1 | grep -E '^\[ FAIL|count_text|prices_via|\$\{h\}'`*
+
+```
+[ INFO ] ${count_text} = 6 products
+[ INFO ] ${prices_via_contract} = ['$249.99', '$219.00', '$129.00', '$189.00', '$149.00', '$169.00']
+[ INFO ] ${h} = Discover your next workflow upgrade
+```
+
+*The agent reads `<repo>/results/price-range-100-300.png`*
+
+**Agent:**
+
+Everything I need is confirmed. I'll do a quick REPL check of the price-to-number conversion I'm about to suggest, so the sketch below isn't untested.
+
+*The agent runs `printf '%s\n' \
+'@{texts}=    Create List    $249.99    $219.00    $1,129.00' \
+'@{amounts}=    Evaluate    [float(text.lstrip("$").replace(",", "")) for text in $texts]' \
+'.exit' | timeout 60 uv run robotcode repl --plain --no-history 2>&1 | grep -E 'amounts|FAIL'`*
+
+```
+[ INFO ] @{amounts} = [ 249.99 | 219.0 | 1129.0 ]
 ```
 
 **Agent:**
 
-I opened `/products` in a visible Chromium from the RobotCode REPL, using `resources/shop.resource`. Setting the range to $100–$300 and clicking "Apply filters" works: the grid drops from 12 cards to 6, and every card is priced between $100 and $300. This is criterion **WEB-002_AC-8**. I wrote no files in the repo.
+The $100–$300 filter works in the RobotCode REPL with a visible browser. I opened `/products` through `shop.resource` (`Open Shop Browser`, `Start Shop Test`, `Go To Shop Page /products`), set both sliders, clicked "Apply filters", and the page showed "6 products". Those are exactly the six products the API lists between $100 and $300: $249.99, $219.00, $129.00, $189.00, $149.00 and $169.00. The spec for this is `WEB-002_AC-8`. I didn't create any test file.
 
-## What happened
-- **Opening the page:** `Open Shop Browser`, `Start Shop Test`, then `Go To Catalogue` from `catalogue.resource`. The grid showed 12 cards and the range read `39.50` to `899.00`.
-- **The sliders:** they are two `<input type="range">` elements with accessible names "Minimum price" and "Maximum price". The values shown above them are `<output>` elements, which is what the existing `Get Price Range Values` reads.
-- **Setting the range:** `Fill Text` with `100` and `300` works on these sliders. The shown values changed to `100.00` / `300.00`, so the page's own handlers ran.
-- **After "Apply filters":** the URL became `/products?price_min=100.00&price_max=300.00` and the range still showed `100.00` / `300.00`. The 6 cards were Aurora Neural Headphones ($249.99), Echo Conference Speaker ($219.00), Nimbus Desk Light ($129.00), Pulse Bio Ring ($189.00), Summit Trail Shoes ($149.00) and Velocity Travel Backpack ($169.00).
-- **Checked against the API:** `Get Catalogue From API` filtered to 100–300 gives exactly the same 6 names.
+## Locators that work
 
-## Keywords that already fit
-| Step | Keyword |
-|---|---|
-| Open the page | `Go To Catalogue` |
-| Apply | `Apply Filters` (clicks `${FILTERS} >> role=button[name="Apply filters"]`) |
-| Check the shown range | `Get Price Range Values` returns `['100.00', '300.00']` after applying |
-| Card names | `Get Grid Card Names` |
+| What | Locator | Checked |
+|---|---|---|
+| Minimum slider | `${FILTERS} >> role=slider[name="Minimum price"]` | yes |
+| Maximum slider | `${FILTERS} >> role=slider[name="Maximum price"]` | yes |
+| Values shown for the range | `${FILTERS} >> role=group[name="Price range"] >> role=status` (already used by `Get Price Range Values`) | yes: `100.00` and `300.00`, before and after applying |
+| Card prices | `${GRID} >> article >> ${CARD PRICE}` | yes: returns the six prices |
+| Result count (optional) | `${GRID} >> p:text-matches("^[0-9]+ products?$")` | yes: "6 products" |
 
-The suite setup already runs `Open Shop Browser` and `Open Shop API`, and each test starts with `Start Shop Test`.
+`${FILTERS}`, `${GRID}` and `${CARD PRICE}` are variables already defined in `resources/catalogue.resource`.
 
-## Two keywords to add to `resources/catalogue.resource`
-Both use locators I tried in the REPL:
+**How to set the range: `Fill Text`.** The sliders are ordinary browser range sliders, and `Fill Text <slider> 100` sets the exact value. The page reacts properly: the displayed values change, and the form sends `?price_min=100.00&price_max=300.00`. Two alternatives I'd avoid:
+- **Dragging the handles with the mouse** depends on pixel positions, and the sliders allow any value (`step="any"`), so you won't land on exactly 100.
+- **Opening that URL directly** skips the "shopper sets the price range" part of the spec.
+
+## Keywords
+
+**Already there and usable:**
+- `Go To Catalogue` is `Go To Shop Page /products` plus a wait for the product grid.
+- `Apply Filters` clicks the button and waits for the new page, because Browser's `Click` waits for the page load it triggers.
+- `Get Price Range Values`, `Get Grid Card Count` and `Get Grid Card Names` all work.
+
+**Avoid `Get Card Prices`.** It's in `legacy.resource` and finds the grid by the CSS class `.product-grid`, which the conventions say not to rely on. The card-price locator above gets the same prices without that class.
+
+**Missing, and would belong in `resources/catalogue.resource`.** This is only a sketch, not written to the repo. I ran each step of it in the REPL, but not as a keyword:
 
 ```robotframework
 Set Price Range
-    [Documentation]    Moves the price sliders to ``minimum`` and ``maximum``.
+    [Documentation]    Moves the price range handles to ``minimum`` and ``maximum``.
     [Arguments]    ${minimum}    ${maximum}
     Fill Text    ${FILTERS} >> role=slider[name="Minimum price"]    ${minimum}
     Fill Text    ${FILTERS} >> role=slider[name="Maximum price"]    ${maximum}
 
-Get Grid Card Prices
-    [Documentation]    The prices of the grid cards, in page order.
-    @{prices}=    Get Texts    ${GRID} >> article >> ${CARD PRICE}
-    RETURN    ${prices}
+Get Grid Card Price Amounts
+    [Documentation]    The price of every grid card as a number, in page order.
+    @{texts}=    Get Texts    ${GRID} >> article >> ${CARD PRICE}
+    @{amounts}=    Evaluate    [float(text.lstrip("$").replace(",", "")) for text in $texts]
+    RETURN    ${amounts}
 ```
 
-- **Don't reuse `Get Card Prices` or `Get Grid Cards`:** the suite already uses them, but they come from `legacy.resource` and find the grid through the `.product-grid` class. That's the deliberate deviation Module 8 heals. `${GRID} >> article >> ${CARD PRICE}` returned exactly one price per card (6 of 6).
-- **Don't use the hidden `input[name="price_min"]` / `input[name="price_max"]` fields:** they follow the sliders, but they're implementation details. Assert through the sliders' names and the shown values.
+A test would then be `Go To Catalogue` → `Set Price Range 100 300` → `Apply Filters` → check that the list isn't empty and that every amount is between 100 and 300. That's what the spec asks: "every product in the grid is priced from $100.00 to $300.00 inclusive". Name it `WEB-002_AC-8 …`; the suite already tags every test with `WEB-002` and `ui`.
 
-## What to assert
-The spec's scenario says "every product in the grid is priced from $100.00 to $300.00 inclusive". So the test should check that the grid isn't empty and that each price, as a number (for example `${{ float($p.lstrip("$").replace(",", "")) }}`), is between 100 and 300. Comparing names with the API also passed, but it checks more than AC-8 says.
-
-## Caveats
-- **The bounds aren't tested:** no seeded product costs exactly $100 or $300 (the nearest are $79.00 and $389.00). A pass with this data doesn't prove the bounds are inclusive.
-- **Passing `-v HEADLESS:False` to `robotcode repl` didn't work:** importing `shop.resource` set it back to `True`, so I ran `Set Global Variable    ${HEADLESS}    ${False}` before `Open Shop Browser`. I didn't check whether `-v` has the same problem in a normal `robotcode robot` run.
-
-The browser is closed and the REPL session has ended.
+## Worth knowing
+- **The bounds aren't tested.** No product costs exactly $100 or $300; the nearest ones outside are $79.00 and $389.00. A test with this range shows products outside are excluded, but not that $100 and $300 themselves are included. Covering that would need different shop data, which a test must not create through a preset.
+- **One setup step:** the REPL failed at first with `FileNotFoundError … results/playwright-log.txt`, the trap listed in `docs/robotcode.md`. I created `results/`, which git ignores, and left it in place.
 
 ## Stretch - A results question
 
