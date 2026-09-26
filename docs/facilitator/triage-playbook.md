@@ -47,5 +47,12 @@ while the room waits.
   a preset other than `clean` is on. `uv run --no-sync python -m shop reset` fixes it.
 - **Hooks or MCP do nothing in Copilot or Codex.** The folder, or the hooks, are not trusted yet. Start the agent
   interactively in the repository once and accept.
+- **The agent waits at the `(rdb)` or REPL prompt and never comes back, or reaches for tmux** (Windows has none). It
+  started the debugger or the REPL without input. Stop the command, and ask for the piped form: one command per line,
+  ending with one that resumes, for example
+  `printf '.where\n.continue\n' | uv run robotcode robot-debug --plain -bl "<long name>"`. When the input ends,
+  the run resumes and finishes. [The cheat sheet](../robotcode.md) has more.
+- **The REPL fails with `FileNotFoundError` for `playwright-log.txt`.** The agent passed an output directory with
+  `-d` that does not exist, and the REPL does not create it. Create it, or leave out `-d` to use `results/`.
 - **Codex cannot reach the shop from a test run.** Its sandbox blocks network access; see `docs/environments.md`.
 - **A corporate proxy blocks the agent.** Nothing to fix on the day: pair them, and give them the transcripts.

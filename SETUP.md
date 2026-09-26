@@ -222,6 +222,8 @@ Change these together, in one pull request:
    `uv lock`.
 2. The shop tag in `shop/compose.yaml`: always a version tag, never `edge` or `sha-...`.
 3. The numbers in this guide's prerequisites table.
+4. For a new RobotCode, Robot Framework or Browser version: run the examples of `docs/robotcode.md` again, and update
+   its output and traps.
 
 `setup-check` reads its expectations from `uv.lock`, `[tool.workshop]` and `shop/compose.yaml`, so it needs no
 edit. Run it afterwards on a clean machine.

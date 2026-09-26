@@ -1,8 +1,9 @@
 # Lab 6 - MCP
 
-In Lab 5 your agent wrote tests without ever seeing the page. Now give it live access: the Robot Framework
-[MCP server](../../GLOSSARY.md#mcp) runs one keyword at a time in a session that stays open, and lets the agent look
-at the page before it decides the next step. Rebuild one of your Lab 5 tests that way, and compare.
+In Lab 5 your agent wrote tests without seeing the page. Lab 4's REPL step could show it one, but only while a
+single command ran. Now give it a session that stays open: the Robot Framework [MCP server](../../GLOSSARY.md#mcp)
+runs one keyword at a time, keeps the browser between the agent's steps, and lets the agent look at the page before
+it decides the next step. Rebuild one of your Lab 5 tests that way, and compare.
 
 | | |
 |---|---|

@@ -9,14 +9,13 @@ Documentation       The browser and the shop's pages.
 Library             Browser
 
 
-*** Variables ***
-${HEADLESS}     ${True}
-
-
 *** Keywords ***
 Open Shop Browser
-    [Documentation]    Starts the browser once for the suite.
-    New Browser    chromium    headless=${HEADLESS}
+    [Documentation]    Starts the browser once for the suite: headless, unless ``HEADLESS`` is
+    ...    false, for example with ``-v HEADLESS:False``.
+    # Not a variable table: importing this file at run time, as the REPL does, would reset -v.
+    ${headless}=    Get Variable Value    ${HEADLESS}    ${True}
+    New Browser    chromium    headless=${headless}
 
 Start Shop Test
     [Documentation]    Opens a fresh context and page for one test.
