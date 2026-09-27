@@ -21,14 +21,15 @@ The five rungs the day climbs, each useful on its own:
 1. **Context**: standing knowledge in a [context file](#context-file).
 2. **Skills**: expertise loaded when a task needs it.
 3. **Tooling**: command-line tools the agent runs, such as [RobotCode](#robotcode).
-4. **Live access**: a running session the agent steps through, over [MCP](#mcp).
+4. **Live access**: a running session that stays open between the agent's steps, over [MCP](#mcp).
 5. **Orchestration**: [hooks](#hook), [subagents](#subagent), CI and healing around the agent.
 
 Most teams get the most from rungs 1 to 3 first.
 
 ### Tier
 
-One rung of the ladder. "Tiers 1 to 3" means context, skills and tooling, without live access.
+One rung of the ladder. "Tiers 1 to 3" means context, skills and tooling, without a session that stays open
+between the agent's steps.
 
 ### Non-determinism
 
@@ -80,7 +81,8 @@ lists plugins. The RobotCode plugin is one.
 ### RobotCode
 
 The Robot Framework toolkit behind the VS Code extension, with a command line agents can use: `uv run robotcode`.
-Run through uv, it sees this project's libraries at their pinned versions.
+Run through uv, it sees this project's libraries at their pinned versions. Commands, agent use and traps:
+[the RobotCode cheat sheet](docs/robotcode.md).
 
 ### Discover
 
@@ -112,8 +114,9 @@ the wrong one for debugging a test that exists.
 
 The Model Context Protocol: a standard way for an agent to use tools a separate program offers. That program is an
 *MCP server*. The Robot Framework MCP server runs keywords in a session that stays open, and shows the agent the page
-after each step. Its tools take room in the [context window](#context-window), so use it where live, stateful work
-pays for that.
+after each step. RobotCode's [REPL](#repl) and [debugger](#debugger) reach the page too, but only while one command
+runs. The MCP tools take room in the [context window](#context-window), so use them where live, stateful work pays
+for that.
 
 ### Stepwise execution
 

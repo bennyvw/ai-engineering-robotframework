@@ -3,7 +3,8 @@
 Teach your agent to work like a Robot Framework engineer who knows your setup: ask the project instead of grepping
 it, look up the installed libraries instead of guessing, and debug a failing test at a live breakpoint instead of
 re-running it blindly. All of it through the [RobotCode](../../GLOSSARY.md#robotcode) command line. No server is
-involved.
+involved. Keep [the RobotCode cheat sheet](../../docs/robotcode.md) open: which command answers which question, and
+the traps.
 
 | | |
 |---|---|
@@ -68,7 +69,9 @@ involved.
    > (HEADLESS set to False): open the products page through resources/shop.resource, set the range to $100-$300,
    > apply the filters, and tell me which keywords and locators would work for a test. Don't write a test file.
 
-   A browser window opens and follows the agent's steps. The REPL is the right tool *only* here. An agent that
+   A browser window opens and follows the agent's steps. The REPL does not create its output directory, so opening
+   the browser fails unless it exists: `results/`, which your earlier runs created, or one the agent passes with `-d`.
+   The REPL is the right tool *only* here. An agent that
    opens the REPL to investigate the failing test of step 5 is misusing it: look out for that in the debrief.
 
 ## Stretch

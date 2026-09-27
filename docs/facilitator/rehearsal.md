@@ -157,6 +157,26 @@ Found and changed:
 - **Heals differ from run to run.** The two runs replaced `${GRID} >> .product-grid` with different locators, one
   of them no longer using `${GRID}`. Reviewing the suggestion is the lesson, as in Lab 8.
 
+## Lab 4, step 6 again (2026-09-26)
+
+After `robotcode-chapter`, `-v HEADLESS:False` holds in the REPL, and Lab 4 links the RobotCode cheat sheet. Step 6
+was run again: Claude Code 2.1.283 headless, the lab's prompt, in a fresh clone of the change's branch with the
+participant's work of Labs 2 to 4 copied from the first rehearsal's clone.
+
+| Lab | Result | Duration | Tokens (in / out) |
+|---|---|---|---|
+| 4, step 6 | checklist holds: a visible browser from `-v HEADLESS:False` with no workaround (`"headless": false`, no `Set Global Variable`), the REPL piped as the cheat sheet shows, no test file, working locators and keywords for the price range | 4.5 min (7 in the first rehearsal) | 837 k / 15 k |
+
+Found and changed:
+- **The agent found the cheat sheet by itself** (`ls docs`), read it before starting the REPL, and piped every
+  session instead of keeping one open.
+- **The output directory bites without `-d` too.** The clone had never run a test, so `results/` did not exist and
+  the first REPL failed with `FileNotFoundError`. The agent created `results/` from the cheat sheet's trap table. In
+  the lab, earlier runs have created it, but the cheat sheet, Lab 4 and the triage playbook said only `-d` needed
+  care. They now say that the directory must exist, whichever it is.
+- **Codex was not run again.** The change removed a trap without changing a step, so the Codex run of Lab 4 above
+  still stands for everything it recorded.
+
 ## Still to do before the workshop tag
 
 | Check | Who | State |

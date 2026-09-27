@@ -45,7 +45,7 @@ GIVEAWAYS = [
     (re.compile(r"4 stars (and|&) up", re.I), "the cause of the Module 5 broken test"),
     (re.compile(r"'?899\.0'?(?!0)|unformatted|as numbers? from the API", re.I), "the cause of the Module 4 broken test"),
 ]
-PARTICIPANT_FILES = ("labs/**/*.md", "GLOSSARY.md", "docs/environments.md")
+PARTICIPANT_FILES = ("labs/**/*.md", "GLOSSARY.md", "docs/environments.md", "docs/robotcode.md")
 STORY_DIR = "labs/lab-05-prompt-to-green/stories/"  # copied verbatim; not ours to police
 
 LINK = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)\)")

@@ -79,7 +79,7 @@ Everyone runs `setup-check`, clones the workshop repo, starts the demo shop, run
 
 ## Module 4 — RobotCode for Agents (45 min · 15/25/5)
 
-The chat plugin teaches agents the `robotcode` CLI habits: **`discover`, never grep** (runtime resolution); **`libdoc` before generic knowledge** (installed versions, not training memories); **`robot-debug` for failing tests** (live breakpoint, real variables — not blind re-runs); **REPL only when no test exists yet** (the plugin's most common misfire — we trigger it on purpose); **`results`, not raw output.xml**. One `AGENTS.md` line ties Tier 1 to Tier 3.
+The chat plugin teaches agents the `robotcode` CLI habits: **`discover`, never grep** (runtime resolution); **`libdoc` before generic knowledge** (installed versions, not training memories); **`robot-debug` for failing tests** (live breakpoint, real variables, and at a Browser failure the page itself — not blind re-runs); **REPL only when no test exists yet** (the plugin's most common misfire — we trigger it on purpose); **`results`, not raw output.xml**. One `AGENTS.md` line ties Tier 1 to Tier 3.
 **Lab:** install the plugin; discovery question; libdoc lookup; step-debug a pre-broken test; REPL-explore a new flow with visible browser. Stretch: results query by tag.
 **Outcome:** an agent that behaves like an RF engineer who knows your setup — files and CLI only, no server required.
 
@@ -87,12 +87,12 @@ The chat plugin teaches agents the `robotcode` CLI habits: **`discover`, never g
 
 The payoff, on Tiers 1–3 alone. User story → convention-following green suite; review discipline; conversational debugging end-to-end at a real breakpoint.
 **Lab:** one of three user stories to green; pair-review in breakouts (like a junior engineer's PR); debug one pre-broken test purely through conversation. Stretch: API-level test via Requests keywords.
-**Debrief:** group review checklist on a whiteboard — and note what was missing: the agent couldn't peek at the live page mid-draft. Hold that thought.
+**Debrief:** group review checklist on a whiteboard — and note what was missing: a session that stays open while the agent drafts. Every look at the live page cost a fresh command. Hold that thought.
 **Outcome:** a repeatable prompt → review → refine loop, plus a felt sense of the Tier 1–3 ceiling.
 
 ## Module 6 — Robot Framework MCP: The Live-Access Upgrade (45 min · 15/25/5)
 
-The before/after on Module 5's own task: stepwise execution — run a step, inspect the live page, decide the next. Honest trade-off: MCP tools occupy context; CLIs and skills are cheaper — use MCP where live, stateful interaction earns its keep. Ecosystem note: tier boundaries are still moving; the tiers are complementary and skills transfer regardless of transport.
+The before/after on Module 5's own task: stepwise execution — run a step, inspect the live page, decide the next. RobotCode's REPL and debugger reach the page too, but only while one command runs; the MCP session stays open across the agent's steps. Honest trade-off: MCP tools occupy context; CLIs and skills are cheaper — use MCP where live, stateful interaction earns its keep. Ecosystem note: tier boundaries are still moving; the tiers are complementary and skills transfer regardless of transport.
 **Lab:** connect the RF MCP server; rebuild the Module 5 test stepwise; compare both versions — where did live access change the result? Stretch: change the page in the browser mid-session and ask the agent again.
 **Outcome:** grounded live development and the judgement of when MCP is worth the setup.
 
@@ -136,8 +136,8 @@ Everything used during the day, what for, and when it first appears.
 | `AGENTS.md` / `CLAUDE.md` | Tier 1: standing project context | M2 | Text editor. That's the point. |
 | Agent Skills / `SKILL.md` | Tier 2: on-demand expertise | M3 | Workshop repo `skills/` + marketplace |
 | Robot Framework Agent Skills | Ready-made RF skills | M3 | Marketplace / repo install, per setup guide |
-| RobotCode CLI + agent plugin | Tier 3: discover, libdoc, robot-debug, REPL, results | M4 | `pip install robotcode` **in the project venv** (not pipx/uvx); plugin via marketplace |
-| Robot Framework MCP server | Tier 4: live stepwise execution | M6 | Per setup guide; config snippets for each agent in repo |
+| RobotCode CLI + agent plugin | Tier 3: discover, libdoc, robot-debug, REPL, results | M4 | In the locked environment, run as `uv run robotcode` (never a global pipx or `uv tool` install); plugin via marketplace |
+| Robot Framework MCP server | Tier 4: stepwise execution in a session that stays open | M6 | Per setup guide; config snippets for each agent in repo |
 | Hooks (agent-native) | Guardrails | M7 | Provided configs in repo `hooks/` |
 | Subagent definitions | Writer / reviewer / runner | M7 | Provided in repo `agents/` |
 | `gh` CLI | GitHub reach: issues, PRs, checks | M7 | Installed + authenticated pre-workshop |
