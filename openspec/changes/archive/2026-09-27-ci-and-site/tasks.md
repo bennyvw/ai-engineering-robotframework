@@ -63,4 +63,4 @@
 ## 6. Close-out
 
 - [x] 6.1 After this change is merged, rebase `solutions` onto `main` and push it. Verify: its suite passes, and `main` is unchanged.
-- [ ] 6.2 Validate and archive. Verify: `openspec validate ci-and-site --strict` passes. After the merge, the archive creates `workshop/ci`, `workshop/docs-site` and `workshop/participation` with their Purpose.
+- [x] 6.2 Validate and archive. Verify: `openspec validate ci-and-site --strict` passes. After the merge, the archive creates `workshop/ci`, `workshop/docs-site` and `workshop/participation` with their Purpose.

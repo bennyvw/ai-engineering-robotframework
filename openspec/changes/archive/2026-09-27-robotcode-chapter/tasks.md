@@ -70,4 +70,4 @@
 - [x] 6.1 Run the repository's checks. Verify:
   - `openspec validate --all --strict`, `tools/check_labs.py`, `tools/verify_outcomes.py` and the site build pass;
   - no commit contains `docs/robotcode-reports/` or any other part of the report.
-- [ ] 6.2 Archive after the merge. Verify: `workshop/facilitation` gains *A RobotCode cheat sheet* and *One boundary between Tier 3 and Tier 4*, and `workshop/baseline-suite` gains *A visible browser on request*.
+- [x] 6.2 Archive after the merge. Verify: `workshop/facilitation` gains *A RobotCode cheat sheet* and *One boundary between Tier 3 and Tier 4*, and `workshop/baseline-suite` gains *A visible browser on request*.
