@@ -80,8 +80,8 @@ git archive <solutions ref> transcripts solutions docs/facilitator/suite-outcome
 | pull request to `main` | the pull request | `origin/solutions` |
 | pull request to `solutions` | `main` | the pull request's head |
 
-- Deployment runs for pushes to either branch, and stays guarded by the repository name.
-- One concurrency group for deployments keeps a push to `main` and a push to `solutions` from racing.
+- Deployment runs from `main` only, and stays guarded by the repository name. The `github-pages` environment allows no other branch, as the first push to `solutions` showed. A push to `solutions` therefore builds, as a check, and then dispatches this workflow on `main`, which deploys. A dispatch started with the workflow's own token is one of the events that does start a new run. The alternative, allowing `solutions` in the environment, would widen a security setting for no gain.
+- One concurrency group for deployments keeps a push to `main` and a redeploy for `solutions` from racing.
 - A push to `solutions` uses the workflow file from the pushed commit, which is `main`'s after a rebase, because the branch never changes workflows.
 - For local builds, `website/package.json` gets a `reference` script that runs the same two commands against `origin/solutions`.
 
