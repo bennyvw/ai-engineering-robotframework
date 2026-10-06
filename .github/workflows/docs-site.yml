@@ -1,7 +1,9 @@
 # Builds the documentation site on pull requests and deploys it to GitHub Pages (spec: workshop/docs-site).
 # The site is main plus the reference material of the solutions branch: transcripts, reference pages and the
 # facilitators' answer sheet, which never live on main (spec: workshop/solutions). A push to either branch
-# redeploys it. Every job runs in the workshop's repository only: forks neither build nor deploy it.
+# redeploys it, always from main: the github-pages environment deploys from main only, so a push to solutions
+# builds, then runs this workflow on main. Every job runs in the workshop's repository only: forks neither
+# build nor deploy it.
 name: Documentation site
 
 on:
@@ -65,9 +67,7 @@ jobs:
           npm run build
 
       - name: Prepare the Pages artifact
-        if: >-
-          github.event_name != 'pull_request' &&
-          (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/solutions')
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: website/build
@@ -77,11 +77,10 @@ jobs:
     needs: build
     if: >-
       github.repository == 'manykarim/ai-engineering-robotframework' &&
-      github.event_name != 'pull_request' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/solutions')
+      github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    # A push to main and a push to solutions both deploy; one at a time, none cancelled.
+    # Deployments from pushes to main and from redeploys for solutions: one at a time, none cancelled.
     concurrency:
       group: docs-site-deploy
       cancel-in-progress: false
@@ -95,3 +94,20 @@ jobs:
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  redeploy:
+    name: Redeploy from main
+    needs: build
+    if: >-
+      github.repository == 'manykarim/ai-engineering-robotframework' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/solutions'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      actions: write
+    steps:
+      # A dispatch with the workflow's token starts a new run; that run builds main with the branch and deploys.
+      - name: Run this workflow on main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run docs-site.yml --repo "$GITHUB_REPOSITORY" --ref main

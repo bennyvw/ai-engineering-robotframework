@@ -53,7 +53,7 @@
   - the all-of-`main` scan finds nothing;
   - `git grep` for the name of each test broken on purpose prints no cause;
   - the pull request's site build, using the material from `origin/solutions`, passes.
-- [ ] 4.2 After the merge, rebase `solutions` onto `main`. The reference commit adds back the transcripts and the answer sheet as they stood before 4.1 (design, migration step 3). Verify:
+- [x] 4.2 After the merge, rebase `solutions` onto `main`. The reference commit adds back the transcripts and the answer sheet as they stood before 4.1 (design, migration step 3). Verify:
   - the restored files are identical to their last version on `main`;
   - the suite on `solutions` passes;
   - after the redeployment, each lab's transcript and reference URL answers with HTTP 200, as do the facilitator pages.
@@ -66,6 +66,7 @@
   - `tools/verify_outcomes.py` passes from `main`;
   - the site build passes;
   - the transcript scan on the `solutions` branch finds no secret or local path.
+  - a push to `solutions` builds, then redeploys the site from `main` (design D3), and the deployment succeeds.
 - [ ] 5.2 Archive after the merge. Verify:
   - `workshop/solutions` gains *Reference pages* and *No answers on main*, and its *A solutions branch* names the reference commits;
   - the changed requirements of `workshop/facilitation`, `workshop/docs-site`, `workshop/baseline-suite` and `workshop/labs` read as in the change.
