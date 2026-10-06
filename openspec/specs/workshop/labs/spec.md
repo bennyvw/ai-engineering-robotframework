@@ -70,11 +70,15 @@ Lab 8 SHALL apply `drift_and_bug`, run the suite with the healing profile, and h
 - **THEN** Lab 8 has them triage a recorded healing report instead, and the agentic stretch goal still works for them
 
 ### Requirement: Labs do not give the answers away
-Participant-facing lab material SHALL NOT name the planted defects, the suite's inline locator, or the cause of a test broken on purpose. It MAY say where to look.
+Participant-facing material on `main` SHALL NOT name the planted defects, the suite's inline locator, or the cause of a test broken on purpose. It MAY say where to look. The reference pages and transcripts on the `solutions` branch show these answers by design. A lab MAY link them, and SHALL NOT quote them.
 
 #### Scenario: Reading Lab 7
 - **WHEN** a participant reads Lab 7's instructions before running the suite under `buggy`
 - **THEN** they learn how to find and file a defect, but not which defects exist
+
+#### Scenario: Following a reference link
+- **WHEN** a participant opens Lab 4's reference page on the site
+- **THEN** it explains the cause of the Module 4 broken test, while no file on `main` states it
 
 ### Requirement: Rehearsed labs
 Before the workshop's `main` is tagged, every lab SHALL have been run end to end with the pinned stack on a clean checkout, Lab 5 without an MCP server, and Labs 2 to 4 once more with a second supported agent. Each rehearsal SHALL leave a transcript.

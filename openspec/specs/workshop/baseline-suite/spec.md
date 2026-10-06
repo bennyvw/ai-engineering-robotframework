@@ -84,11 +84,21 @@ When `SHOP_SPACE` is set, every browser context and every API session the suite 
 - **THEN** the pages it opens report `octocat`, and the presets that hold in `octocat` are the same before and after the run
 
 ### Requirement: A verified expected-outcome matrix
-The repository SHALL record, as data, which tests fail under each of the presets `clean`, `stage2`, `stage3`, `stage4`, `buggy` and `drift_and_bug`, and why. A documented command SHALL run the suite under each of these presets against the pinned shop, compare the results with the data, exit with a non-zero status on any difference, and leave the space reset.
+The repository SHALL record, as data on the `solutions` branch, which tests fail under each of the presets `clean`, `stage2`, `stage3`, `stage4`, `buggy` and `drift_and_bug`, and why.
+
+A documented command SHALL:
+- read that data from the `solutions` branch by default;
+- run the suite under each of these presets against the pinned shop;
+- compare the results with the data, and exit with a non-zero status on any difference;
+- leave the space reset.
 
 #### Scenario: The image changes behaviour
 - **WHEN** a test's outcome under some preset differs from the recorded matrix
 - **THEN** the verification command names the test, the preset, and the recorded and actual outcomes, and exits with a non-zero status
+
+#### Scenario: Verifying from main
+- **WHEN** a maintainer runs the verification command on a checkout of `main`
+- **THEN** it reads the data from the `solutions` branch, or says how to fetch the branch when it is missing
 
 ### Requirement: A healing profile
 The repository SHALL offer a `heal` run profile that attaches the healing listener to the unmodified suite, writes fixes only as proposals, and never heals assertions. It SHALL combine with the `local` and `shared` profiles. Without a configured model, a run with the profile SHALL produce the same test results as a plain run.

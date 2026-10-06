@@ -67,6 +67,6 @@
   - the site build passes;
   - the transcript scan on the `solutions` branch finds no secret or local path.
   - a push to `solutions` builds, then redeploys the site from `main` (design D3), and the deployment succeeds.
-- [ ] 5.2 Archive after the merge. Verify:
+- [x] 5.2 Archive after the merge. Verify:
   - `workshop/solutions` gains *Reference pages* and *No answers on main*, and its *A solutions branch* names the reference commits;
   - the changed requirements of `workshop/facilitation`, `workshop/docs-site`, `workshop/baseline-suite` and `workshop/labs` read as in the change.
