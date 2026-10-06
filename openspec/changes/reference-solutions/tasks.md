@@ -49,7 +49,7 @@
 
 ## 4. The move
 
-- [ ] 4.1 Delete `transcripts/` and `docs/facilitator/suite-outcomes.md` and `.toml` from `main`, and add their paths to `.gitignore` (design D1, D5). Verify:
+- [x] 4.1 Delete `transcripts/` and `docs/facilitator/suite-outcomes.md` and `.toml` from `main`, and add their paths to `.gitignore` (design D1, D5). Verify:
   - the all-of-`main` scan finds nothing;
   - `git grep` for the name of each test broken on purpose prints no cause;
   - the pull request's site build, using the material from `origin/solutions`, passes.
