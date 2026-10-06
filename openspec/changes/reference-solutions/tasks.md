@@ -60,7 +60,7 @@
 
 ## 5. Close-out
 
-- [ ] 5.1 Run the checks. Verify:
+- [x] 5.1 Run the checks. Verify:
   - `openspec validate --all --strict` passes;
   - `tools/check_labs.py` passes, including the all-of-`main` scan;
   - `tools/verify_outcomes.py` passes from `main`;
