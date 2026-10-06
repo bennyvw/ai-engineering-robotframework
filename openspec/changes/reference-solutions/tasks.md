@@ -7,13 +7,13 @@
   - every page has the four parts of the specification;
   - every file shown in full matches the file in its lab's commit;
   - the transcript scan finds no secret, local path, user or host name in the pages.
-- [ ] 1.3 Commit the pages as a `reference` commit that also drops the `.gitignore` lines of design D5, and push the branch as `solutions-next` for review. Force-push it to `solutions` once the pages are approved. Verify:
+- [x] 1.3 Commit the pages as a `reference` commit that also drops the `.gitignore` lines of design D5, and push the branch as `solutions-next` for review. Force-push it to `solutions` once the pages are approved. Verify:
   - `git log --oneline main..origin/solutions` shows the lab commits, then the reference commit;
   - Lab 5's catch-up command still restores `AGENTS.md` from the branch.
 
 ## 2. The site
 
-- [ ] 2.1 Change `docs-site.yml`, `docusaurus.config.js`, `sidebars.js` and `website/package.json` (design D3):
+- [x] 2.1 Change `docs-site.yml`, `docusaurus.config.js`, `sidebars.js` and `website/package.json` (design D3):
   - the build takes the reference material from the right ref for each event;
   - deployment runs for pushes to `main` and to `solutions`, in one concurrency group;
   - the sidebar gets a *Solutions* category;
