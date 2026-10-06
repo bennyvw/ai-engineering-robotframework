@@ -74,6 +74,12 @@ Ask the agent to run the steps of step 3 again, and to tell you what changed on 
 uv run --no-sync python -m shop reset
 ```
 
+## Compare with the reference
+
+When you are done, compare your result with [the reference](https://manykarim.github.io/ai-engineering-robotframework/solutions/lab-06-mcp): what the
+rehearsal produced, why it is a good result, and the answers the debrief covers. Open it after the lab: it
+gives the answers away.
+
 ## If your agent fails
 
-Follow [the recorded walkthrough of this lab](../../transcripts/lab-06-mcp.md), which rebuilds WEB-004_AC-3.
+Follow [the recorded walkthrough of this lab](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-06-mcp), which rebuilds WEB-004_AC-3.

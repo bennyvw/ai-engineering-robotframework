@@ -85,7 +85,13 @@ Lab 8: merge nothing you would reject. It needs your healing model as the secret
 `HEAL_API_KEY`; without them, it ends with a notice and changes nothing. Forks do not let GitHub Actions open pull
 requests by default: then the run's summary links the branch with the heals, and you open the pull request yourself.
 
+## Compare with the reference
+
+When you are done, compare your result with [the reference](https://manykarim.github.io/ai-engineering-robotframework/solutions/lab-09-ci): what the
+rehearsal produced, why it is a good result, and the answers the debrief covers. Open it after the lab: it
+gives the answers away.
+
 ## If your agent fails
 
 This lab needs no agent of your own: the agent runs in CI. If Actions will not run on your fork, follow
-[the recorded walkthrough of this lab](../../transcripts/lab-09-ci.md).
+[the recorded walkthrough of this lab](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-09-ci).

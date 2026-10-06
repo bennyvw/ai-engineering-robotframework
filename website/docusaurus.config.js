@@ -38,6 +38,7 @@ module.exports = {
             'labs/**/*.md',
             'docs/**/*.md',
             'transcripts/**/*.md',
+            'solutions/**/*.md',
           ],
           exclude: ['**/node_modules/**', 'website/**'],
           sidebarPath: require.resolve('./sidebars.js'),

@@ -41,7 +41,8 @@ while the room waits.
 
 - **Agent sign-in or quota fails mid-day.** The lab's *If your agent fails* section points to its transcript. The
   participant follows it and rejoins at the next module. Modules 2 to 4 need the least cloud access: the safe
-  harbour.
+  harbour. If the site is down, the transcripts are readable on GitHub, on the repository's `solutions` branch,
+  under `transcripts/`.
 - **"Mine looks different."** Expected: agents are non-deterministic. Ask them to keep both results for the debrief.
 - **The suite fails more than the two `broken` tests in Module 0.** Check `uv run --no-sync python -m shop status`:
   a preset other than `clean` is on. `uv run --no-sync python -m shop reset` fixes it.

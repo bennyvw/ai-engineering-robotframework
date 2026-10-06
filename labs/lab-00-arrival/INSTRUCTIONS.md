@@ -99,7 +99,13 @@ Stuck on a step? Say so in the chat. The co-host runs a breakout room for exactl
   something? Don't apply any yet: every lab tells you when.
 - Open `tests/ui/catalogue.robot` and `resources/catalogue.resource`. Which file holds the locators?
 
+## Compare with the reference
+
+When you are done, compare your result with [the reference](https://manykarim.github.io/ai-engineering-robotframework/solutions/lab-00-arrival): what the
+rehearsal produced, why it is a good result, and the answers the debrief covers. Open it after the lab: it
+gives the answers away.
+
 ## If your agent fails
 
 Everything up to step 9 needs no agent. If yours won't start or sign in, tell the co-host, and follow
-[the recorded walkthrough of this lab](../../transcripts/lab-00-arrival.md) for step 10.
+[the recorded walkthrough of this lab](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-00-arrival) for step 10.

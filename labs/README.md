@@ -28,8 +28,10 @@ Module 1 (the cold open) and Module 10 (wrap-up) have no lab.
   your own space on the shared instance alike. The labs that change the preset reset it in their last step.
 - **Claude Code, Codex and GitHub Copilot** all work. Where they differ, a step shows a table with one column per
   agent. The facilitator demonstrates with Claude Code.
-- **If your agent fails** mid-lab, every lab links to a recorded walkthrough of the same lab in
-  [`transcripts/`](../transcripts/README.md). Follow along there, and rejoin at the next module.
+- **If your agent fails** mid-lab, every lab links to a recorded walkthrough of the same lab among
+  [the transcripts](https://manykarim.github.io/ai-engineering-robotframework/transcripts). Follow along there, and rejoin at the next module.
+- **After a lab**, its [reference](https://manykarim.github.io/ai-engineering-robotframework/solutions) shows what the rehearsal produced, why it is a good result, and
+  the answers the debrief covers. Open it once you are done: it gives the answers away.
 - **Stretch goals** are for when you finish early. Nothing later depends on them.
 
 Words you have not met before are in the [glossary](../GLOSSARY.md).

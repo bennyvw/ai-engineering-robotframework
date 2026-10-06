@@ -4,7 +4,7 @@
 green test, the shop's layout drifts and breaks the suite, and the suite heals itself. No slides.
 
 **It may not flake.** Rehearse it until it is boring. If any step does not show its expected output, do not debug it
-on stage: switch to the recorded backup, `transcripts/cold-open.md`, which you keep open in a browser tab.
+on stage: switch to the [recorded backup](https://manykarim.github.io/ai-engineering-robotframework/transcripts/cold-open), which you keep open in a browser tab.
 
 ## Before the session (T-15 minutes)
 
@@ -23,7 +23,7 @@ them without asking the model: faster and deterministic, and the console says *"
 locator ... (from history)"*. Keep it for a safe run on stage, or `rm -rf results/heal` for a fresh heal.
 
 Open three windows side by side: a terminal, your agent (Claude Code) in the repository root, and the shop in a
-browser at `http://localhost:9090/products`. Open `transcripts/cold-open.md` in a browser tab and leave it there.
+browser at `http://localhost:9090/products`. Open the recorded backup in a browser tab and leave it there.
 
 ## The five minutes
 

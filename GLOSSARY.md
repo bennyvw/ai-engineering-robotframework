@@ -213,8 +213,8 @@ A test that fails on purpose, tagged `broken`, for a debugging lab. There are tw
 
 ### Transcript
 
-A recorded walkthrough of a lab by an agent, in `transcripts/`. If your agent fails, follow it and rejoin at the next
-module.
+A recorded walkthrough of a lab by an agent, on [the site](https://manykarim.github.io/ai-engineering-robotframework/transcripts). If your agent fails, follow it and
+rejoin at the next module.
 
 ### Fork
 
