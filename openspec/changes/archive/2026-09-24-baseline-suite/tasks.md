@@ -14,8 +14,8 @@
 - [x] 2.1 Write `tests/ui/catalogue.robot` with the seven tests of design D1, including the two tests broken on purpose (D4) and the one inline locator (D5). Verify:
   - after `python -m shop reset`, `uv run robotcode robot --exclude broken tests/ui/catalogue.robot` passes locally;
   - with `--include broken`, exactly the two D4 tests run and fail;
-  - under `robotcode robot-debug`, a breakpoint in `WEB-002_AC-12` shows the API's `899.0` beside the page's `$899.00`;
-  - the `WEB-002_AC-4` failure message contains "4 stars and up".
+  - under `robotcode robot-debug`, a breakpoint in `WEB-002_AC-12` shows the cause in the two values it compares (the answer sheet on the `solutions` branch);
+  - the `WEB-002_AC-4` failure message names the label the test waits for.
 - [x] 2.2 Write `tests/ui/checkout.robot` with the four tests of design D1. Verify: after a reset, the file passes locally, and each test starts with an empty cart. Running the file twice in a row passes both times.
 - [x] 2.3 Write `tests/api/smoke.robot` with the two smoke tests of design D1. Verify: it passes against the local shop and in a shared space, and no file under `tests/api/` or `resources/api.resource` refers to `/api/cart`.
 - [x] 2.4 Check the suite against its own conventions. Verify:

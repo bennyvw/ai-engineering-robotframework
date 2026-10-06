@@ -92,7 +92,13 @@ decide.
   `JIRA_API_TOKEN` and `JIRA_PROJECT` into `.env`, and ask your agent to file the same defect in Jira. It shows a
   dry run first, and sends only after you confirm. Without a Jira site, the dry run alone shows what would be sent.
 
+## Compare with the reference
+
+When you are done, compare your result with [the reference](https://manykarim.github.io/ai-engineering-robotframework/solutions/lab-07-hooks-toolbelt): what the
+rehearsal produced, why it is a good result, and the answers the debrief covers. Open it after the lab: it
+gives the answers away.
+
 ## If your agent fails
 
 Steps 3 to 5, 7 and 8 need no agent. For the rest, follow
-[the recorded walkthrough of this lab](../../transcripts/lab-07-hooks-toolbelt.md).
+[the recorded walkthrough of this lab](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-07-hooks-toolbelt).

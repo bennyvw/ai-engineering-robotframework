@@ -76,7 +76,13 @@ Give the API tests their own context. Create `tests/api/AGENTS.md` with what onl
 `resources/api.resource` and its session `shop`, and they are tagged `api`. Then ask your agent to add an API test
 for the health endpoint's version field, and see whether it followed the nested file. Delete the test afterwards.
 
+## Compare with the reference
+
+When you are done, compare your result with [the reference](https://manykarim.github.io/ai-engineering-robotframework/solutions/lab-02-context): what the
+rehearsal produced, why it is a good result, and the answers the debrief covers. Open it after the lab: it
+gives the answers away.
+
 ## If your agent fails
 
 Steps 2 to 4 need only an editor. For the before and after, follow
-[the recorded walkthrough of this lab](../../transcripts/lab-02-context.md).
+[the recorded walkthrough of this lab](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-02-context).

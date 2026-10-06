@@ -82,7 +82,13 @@ Ask a results question about the last run:
 
 It should use `uv run robotcode results show` with a tag filter.
 
+## Compare with the reference
+
+When you are done, compare your result with [the reference](https://manykarim.github.io/ai-engineering-robotframework/solutions/lab-04-robotcode): what the
+rehearsal produced, why it is a good result, and the answers the debrief covers. Open it after the lab: it
+gives the answers away.
+
 ## If your agent fails
 
-Follow [the recorded walkthrough of this lab](../../transcripts/lab-04-robotcode.md). You can also run steps 3 and 4
+Follow [the recorded walkthrough of this lab](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-04-robotcode). You can also run steps 3 and 4
 yourself: `uv run robotcode discover tests` and `uv run robotcode libdoc Browser list`.

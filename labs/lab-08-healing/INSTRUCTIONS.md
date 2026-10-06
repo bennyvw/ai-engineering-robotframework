@@ -40,7 +40,7 @@ it.
      The report is `results/heal/heal_report.html`. Open it in your browser. Every heal is a proposal: the old
      locator, the new one, and whether the step then passed. Your test files are not changed.
 
-   - *Without a healing model*, use [the recorded healing report](../../transcripts/lab-08-healing-report.md) of the
+   - *Without a healing model*, use [the recorded healing report](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-08-healing-report) of the
      same preset. It lists the same information.
 
 4. **Triage every heal.** For each one, decide, and write down why:
@@ -72,7 +72,13 @@ The other way to heal: repair the test itself, with your agent. Apply `drift_and
 
 Run the test under `drift_and_bug` and under `clean`: it should pass in both. Reset the shop when you are done.
 
+## Compare with the reference
+
+When you are done, compare your result with [the reference](https://manykarim.github.io/ai-engineering-robotframework/solutions/lab-08-healing): what the
+rehearsal produced, why it is a good result, and the answers the debrief covers. Open it after the lab: it
+gives the answers away.
+
 ## If your agent fails
 
 Steps 1 to 6 need no agent. For the stretch goal, follow
-[the recorded walkthrough of this lab](../../transcripts/lab-08-healing.md).
+[the recorded walkthrough of this lab](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-08-healing).

@@ -100,7 +100,13 @@ Add API tests for API-005, the cart API: AC-1, AC-2, AC-4 and AC-7 of
 They go into `tests/api/`, with the keywords they need in `resources/api.resource`, tagged `api`. If you wrote
 `tests/api/AGENTS.md` in Lab 2, check whether the agent followed it.
 
+## Compare with the reference
+
+When you are done, compare your result with [the reference](https://manykarim.github.io/ai-engineering-robotframework/solutions/lab-05-prompt-to-green): what the
+rehearsal produced, why it is a good result, and the answers the debrief covers. Open it after the lab: it
+gives the answers away.
+
 ## If your agent fails
 
-Follow [the recorded walkthrough of this lab](../../transcripts/lab-05-prompt-to-green.md), which does the WEB-004
+Follow [the recorded walkthrough of this lab](https://manykarim.github.io/ai-engineering-robotframework/transcripts/lab-05-prompt-to-green), which does the WEB-004
 slice. You can still do the pair review with its proposal: it is in the walkthrough.

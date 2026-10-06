@@ -199,7 +199,7 @@ agentic-engineering-workshop/
 │   │   ├── setup-problem.yml        # Pre-workshop support funnel
 │   │   └── bug-report.yml           # Target format for the Lab 7 gh exercise
 │   └── DISCUSSIONS categories: Q&A, Show-your-setup, After-the-workshop
-├── transcripts/               # Fallback: recorded agent interactions per lab
+├── (transcripts/)             # Fallback: recorded agent interactions per lab, on the solutions branch and the site
 └── docs/
     ├── conventions.md         # Referenced from AGENTS.md (Lab 2 material)
     ├── environments.md
@@ -265,7 +265,7 @@ agentic-engineering-workshop/
 
 | Risk | Likelihood | Mitigation |
 |---|---|---|
-| Participant agent/API access fails mid-day | High (someone, always) | `transcripts/` walkthroughs per lab; rejoin at next module; Modules 2–4 need minimal cloud access — the safe harbour |
+| Participant agent/API access fails mid-day | High (someone, always) | transcript walkthroughs per lab, on the site; rejoin at next module; Modules 2–4 need minimal cloud access — the safe harbour |
 | Version drift breaks a lab | Medium | Everything pinned; `setup-check` validates versions, not just presence |
 | Corporate proxy blocks agent or Docker | Medium | Named in T-1 week email with test command; drop-in call catches the rest; pairing as last resort |
 | Cold open flakes live | Low (after dry-runs) | Recorded backup of the cold open, one keypress away. Never debug the opener on stage. |

@@ -1,9 +1,9 @@
 ## 1. Prepare the solutions branch
 
-- [ ] 1.1 Rebase `solutions` onto `main` (design D2). Verify:
+- [x] 1.1 Rebase `solutions` onto `main` (design D2). Verify:
   - `git log --oneline main..solutions` lists the seven lab commits in lab order, each message starting with its lab's folder name;
   - on `solutions`, the whole suite passes against a freshly reset shop, including the two tests repaired in Labs 4 and 5.
-- [ ] 1.2 Write the reference pages under `solutions/`: an index, and one page per lab for Labs 0 and 2 to 9 (design D6). Verify:
+- [x] 1.2 Write the reference pages under `solutions/`: an index, and one page per lab for Labs 0 and 2 to 9 (design D6). Verify:
   - every page has the four parts of the specification;
   - every file shown in full matches the file in its lab's commit;
   - the transcript scan finds no secret, local path, user or host name in the pages.
@@ -27,10 +27,10 @@
 
 ## 3. Links and tools on main
 
-- [ ] 3.1 Point every lab's "If your agent fails" link to its transcript on the site, and add a *Compare with the reference* section after *Stretch* (design D4). Update `labs/README.md`, the run sheet, `README.md`, `CONTRIBUTING.md`, and the triage playbook (the branch on GitHub, if the site is down). Verify:
+- [x] 3.1 Point every lab's "If your agent fails" link to its transcript on the site, and add a *Compare with the reference* section after *Stretch* (design D4). Update `labs/README.md`, the run sheet, `README.md`, `CONTRIBUTING.md`, and the triage playbook (the branch on GitHub, if the site is down). Verify:
   - `git diff` shows no change to any lab's steps, stretch goal or checklist;
   - `tools/check_labs.py` passes.
-- [ ] 3.2 Extend `tools/check_labs.py` (design D4, D5):
+- [x] 3.2 Extend `tools/check_labs.py` (design D4, D5):
   - transcript and reference links checked against the `solutions` branch;
   - patterns stored encoded, with `--show-patterns`;
   - a scan of every tracked file on `main`, with the exemptions of design D5.
@@ -40,10 +40,10 @@
   - `--show-patterns` prints the patterns;
   - `git grep` finds no decoded cause in `tools/check_labs.py`;
   - a sentence stating a planted defect, added to a scratch copy, is reported.
-- [ ] 3.3 Make `tools/verify_outcomes.py` read its data from `origin/solutions` by default (design D7). Verify:
+- [x] 3.3 Make `tools/verify_outcomes.py` read its data from `origin/solutions` by default (design D7). Verify:
   - from `main`, `--preset clean` passes against the branch's data;
   - in a scratch clone without the branch, it prints the command that fetches it.
-- [ ] 3.4 Replace each stated cause in the archived `baseline-suite` design and tasks with a pointer to the answer sheet (design D5). Verify:
+- [x] 3.4 Replace each stated cause in the archived `baseline-suite` design and tasks with a pointer to the answer sheet (design D5). Verify:
   - the all-of-`main` scan finds nothing in them;
   - each changed sentence still says what was decided.
 

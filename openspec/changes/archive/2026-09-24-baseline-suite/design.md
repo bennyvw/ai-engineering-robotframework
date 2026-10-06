@@ -13,11 +13,11 @@ See `proposal.md` for the motivation, and `specs/` for the requirements. The fac
 
   The spike measured the first three rows. In stage 4 the class-exact rule falls back to the block rename, so `product-card__price` does drift.
 - **Planted bugs are deterministic and stage-independent**:
-  - the card button is missing on products 5 and 10;
-  - the card price is ×1.15 on products 3, 6, 9 and 12, on the card only;
-  - the checkout's displayed total omits tax;
+  - three of them, each on fixed products or on the checkout, break a criterion a shipped test verifies;
   - the catalogue answers 1-3 s later;
-  - broken card links, on products 4, 8 and 12, are checked by no WEB-002 or WEB-006 criterion.
+  - one more is checked by no WEB-002 or WEB-006 criterion.
+
+  What each is, and where it shows, is in the facilitators' answer sheet, `docs/facilitator/suite-outcomes.md` on the `solutions` branch.
 
   `drift_and_bug` is stage 4 plus the price and total defects.
 - **`robotframework-heal` 0.4.0 heals nothing without a model.** It records the failure, classifies it `unknown`, and reports *"Healing skipped: No model configured for role 'locator'"*. `--listener Heal` attaches it without any change to a suite. It loads the nearest `.env` itself, and lets that file override the environment.
@@ -76,8 +76,8 @@ Checkout fields are scoped to `form[action="/checkout"]`, a stable-contract attr
 
 ### D4. The two tests broken on purpose
 
-- **Module 4, `WEB-002_AC-12 Handpicked Highlights`.** It compares the three prices shown with the three highest prices from the API. It builds the expected list from the API's numbers (`899.0`) but reads the page's text (`$899.00`), so the lists never match. The cause is plain in the two variables at a breakpoint, `robotcode robot-debug`'s whole point, and invisible from the failure message's truncated lists alone.
-- **Module 5, `WEB-002_AC-4 Rating Filter`.** It expects the checkbox "4 stars and up", while `shop/catalogue` quotes "4 stars & up". An agent limited to Tiers 1-3, with no live page, finds the mismatch by reading the spec. That is the point of shipping the specs.
+- **Module 4, `WEB-002_AC-12 Handpicked Highlights`.** It compares the three prices shown with the three highest prices from the API. Its cause is plain in the two variables it compares at a breakpoint, `robotcode robot-debug`'s whole point, and invisible from the failure message alone. The cause is in the facilitators' answer sheet, `docs/facilitator/suite-outcomes.md` on the `solutions` branch.
+- **Module 5, `WEB-002_AC-4 Rating Filter`.** Its cause is a mismatch with `shop/catalogue` that an agent limited to Tiers 1-3, with no live page, finds by reading the spec. That is the point of shipping the specs. The cause is in the facilitators' answer sheet, `docs/facilitator/suite-outcomes.md` on the `solutions` branch.
 
 Both carry the `broken` tag and fail under every preset, so the matrix lists them everywhere. Facilitators run with `--exclude broken` in Modules 7 and 8.
 

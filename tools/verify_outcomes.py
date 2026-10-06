@@ -1,6 +1,10 @@
-"""Check docs/facilitator/suite-outcomes.toml against the pinned shop (spec: workshop/baseline-suite).
+"""Check the suite's expected outcomes against the pinned shop (spec: workshop/baseline-suite).
 
     uv run --no-sync python tools/verify_outcomes.py [--heal] [--preset NAME ...] [--data PATH] [--keep DIR]
+
+The expected outcomes are the facilitators' answer sheet, docs/facilitator/suite-outcomes.toml, which lives on
+the solutions branch, never on main (spec: workshop/solutions). By default this reads it from origin/solutions;
+--data PATH reads a file instead.
 
 For every preset: apply it through the shop helper, run the unmodified suite with
 RobotCode, and compare the failing tests with the data. It works in whichever mode
@@ -31,7 +35,8 @@ from dotenv import dotenv_values  # noqa: E402
 
 from shop.config import load  # noqa: E402
 
-DATA = ROOT / "docs" / "facilitator" / "suite-outcomes.toml"
+DATA = "docs/facilitator/suite-outcomes.toml"
+SOLUTIONS = "origin/solutions"
 MODEL_SETTINGS = ("HEAL_MODEL", "HEAL_LOCATOR_MODEL")
 
 
@@ -55,6 +60,17 @@ def run_suite(profiles: list[str], options: list[str], outdir: Path) -> tuple[se
     return failed, passed
 
 
+def outcomes(path: Path | None) -> dict:
+    """The expected outcomes: from --data, or from the solutions branch."""
+    if path:
+        return tomllib.loads(path.read_text(encoding="utf-8"))
+    done = subprocess.run(["git", "-C", str(ROOT), "show", f"{SOLUTIONS}:{DATA}"], capture_output=True, text=True)
+    if done.returncode != 0:
+        raise SystemExit(f"verify-outcomes: {DATA} is read from {SOLUTIONS}, which this checkout does not have. "
+                         "Fetch it with `git fetch origin solutions`, or pass --data PATH.")
+    return tomllib.loads(done.stdout)
+
+
 def model_configured() -> bool:
     dotenv = dotenv_values(ROOT / ".env") if (ROOT / ".env").is_file() else {}
     return any(os.environ.get(name) or dotenv.get(name) for name in MODEL_SETTINGS)
@@ -64,12 +80,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="verify-outcomes", description=__doc__.split("\n\n")[0])
     parser.add_argument("--heal", action="store_true", help="check drift_and_bug with the heal profile (needs a model)")
     parser.add_argument("--preset", action="append", help="check only this preset (repeatable)")
-    parser.add_argument("--data", type=Path, default=DATA, help="the outcomes file (default: %(default)s)")
+    parser.add_argument("--data", type=Path, help=f"the outcomes file (default: {DATA} on {SOLUTIONS})")
     parser.add_argument("--keep", type=Path, metavar="DIR",
                         help="keep each preset's results, including a healing report, under DIR/<preset>/")
     args = parser.parse_args(argv)
 
-    data = tomllib.loads(args.data.read_text(encoding="utf-8"))
+    data = outcomes(args.data)
     settings = load()
     if settings.problem:
         raise SystemExit(f"verify-outcomes: {settings.problem}")
@@ -81,8 +97,8 @@ def main(argv: list[str] | None = None) -> int:
     expectations = data["heal"] if args.heal else data["presets"]
     presets = args.preset or list(expectations)
     profiles = ["-p", "shared" if settings.shared else "local"] + (["-p", "heal"] if args.heal else [])
-    # Module 8 runs without the tests broken on purpose: the Module 5 one fails only on a
-    # wrong label, which a model may well heal (docs/facilitator/suite-outcomes.md).
+    # Module 8 runs without the tests broken on purpose: healing can make one of them pass for the
+    # wrong reason (the answer sheet on the solutions branch, docs/facilitator/suite-outcomes.md).
     options = ["--exclude", "broken"] if args.heal else []
     inventory = {name for name, kind in data["tests"].items() if not (args.heal and kind == "broken")}
     where = f"{settings.url}" + (f", space {settings.space}" if settings.space else "")

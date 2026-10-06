@@ -35,7 +35,7 @@ Run all of them before you ask for a review:
 openspec validate --all --strict                          # the specs and changes
 uv run --no-sync python tools/check_labs.py               # the lab contract: times, headers, links, no answers given away
 uv run --no-sync python tools/verify_outcomes.py          # the suite under every preset, against the local shop
-cd website && npm ci && npm run build                     # the documentation site; broken links fail it
+cd website && npm ci && npm run reference && npm run build   # the site, with the solutions branch's pages
 ```
 
 `tools/verify_outcomes.py` needs the local shop running (`docker compose -f shop/compose.yaml up -d`), and resets
@@ -56,5 +56,9 @@ it when it finishes. The CI workflows run the suite and build the site on every 
   file, an issue or a transcript.
 - **Pinned versions.** Python dependencies come from `uv.lock`, the shop from `shop/compose.yaml`, actions by
   commit SHA. A version change is its own OpenSpec change, with `setup-check` and the outcome matrix updated.
-- **Labs do not give answers away.** The planted defects, the causes of the broken tests and the inline locator
-  are for facilitators only (`docs/facilitator/`).
+- **No answers on `main`.** The planted defects, the causes of the broken tests and the inline locator are for
+  facilitators and for the reference pages only. Everything that shows a lab's outcome lives on the `solutions`
+  branch: the lab results, one commit per lab; the reference pages in `solutions/`; the transcripts; and the
+  facilitators' answer sheet, `docs/facilitator/suite-outcomes.*`. Change those through a pull request against
+  `solutions`, in commits whose messages start with `reference`. `tools/check_labs.py` fails when an answer appears
+  on `main`.

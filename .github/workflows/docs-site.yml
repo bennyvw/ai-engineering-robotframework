@@ -1,12 +1,15 @@
-# Builds the documentation site on pull requests and deploys it from main to GitHub Pages (spec:
-# workshop/docs-site). Every job runs in the workshop's repository only: forks neither build nor deploy it.
+# Builds the documentation site on pull requests and deploys it to GitHub Pages (spec: workshop/docs-site).
+# The site is main plus the reference material of the solutions branch: transcripts, reference pages and the
+# facilitators' answer sheet, which never live on main (spec: workshop/solutions). A push to either branch
+# redeploys it. Every job runs in the workshop's repository only: forks neither build nor deploy it.
 name: Documentation site
 
 on:
   push:
-    branches: [main]
+    branches: [main, solutions]
     paths: ["**.md", "website/**", ".github/workflows/docs-site.yml"]
   pull_request:
+    branches: [main, solutions]
     paths: ["**.md", "website/**", ".github/workflows/docs-site.yml"]
   workflow_dispatch:
 
@@ -24,7 +27,30 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
+      # Changes to the solutions branch are built with main's pages around them.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ (github.ref == 'refs/heads/solutions' || github.base_ref == 'solutions') && 'main' || github.ref }}
+
+      # The reference material: from the pull request into solutions, the pushed commit, or the branch's tip.
+      - name: Check out the reference material
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: >-
+            ${{ github.base_ref == 'solutions' && github.ref
+            || (github.ref == 'refs/heads/solutions' && github.sha || 'solutions') }}
+          path: .reference
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /transcripts/
+            /solutions/
+            /docs/facilitator/suite-outcomes.*
+
+      - name: Add it to the site's sources
+        run: |
+          cp -r .reference/transcripts .reference/solutions .
+          cp .reference/docs/facilitator/suite-outcomes.* docs/facilitator/
+          rm -rf .reference
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -39,7 +65,9 @@ jobs:
           npm run build
 
       - name: Prepare the Pages artifact
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        if: >-
+          github.event_name != 'pull_request' &&
+          (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/solutions')
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: website/build
@@ -49,9 +77,14 @@ jobs:
     needs: build
     if: >-
       github.repository == 'manykarim/ai-engineering-robotframework' &&
-      github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/solutions')
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    # A push to main and a push to solutions both deploy; one at a time, none cancelled.
+    concurrency:
+      group: docs-site-deploy
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write
