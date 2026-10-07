@@ -20,7 +20,12 @@ When one criterion needs several tests, they share the prefix: `WEB-002_AC-1 Eve
 
 Test files call keywords. Every locator is written inside a keyword under `resources/`.
 
+Import shared resources using paths from the repository root, which is on the RobotCode `python-path`:
+`Resource    resources/shop.resource`. Do not use `${CURDIR}` or parent-relative paths such as
+`Resource    ../../resources/shop.resource`.
+
 *Why:* when the page changes, there is exactly one place to fix, and a test reads as behaviour rather than markup.
+Repository-root imports work from any suite location because RobotCode adds `.` to `python-path`.
 
 ## 3. The stable contract first
 
@@ -72,3 +77,7 @@ session.
 | `smoke` | every test that verifies no criterion |
 | `ui` or `api` | every test, exactly one of the two |
 | `broken` | the two tests that are broken on purpose, and no other |
+
+## 8. Empty line
+
+Every .robot and .resource file should end with an empty line
