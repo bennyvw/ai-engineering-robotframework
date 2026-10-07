@@ -9,10 +9,6 @@ Test Setup          Start Shop Test
 Test Tags           WEB-004    ui
 
 
-*** Variables ***
-${HEADLESS}          ${False}
-
-
 *** Test Cases ***
 WEB-004_AC-3 Search Submission Shows Results
     [Documentation]    Submitting a headphones search displays matching product cards with name, image and price.
